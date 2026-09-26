@@ -2,22 +2,54 @@
 
 一个以“Agent 维护求职任务 + 确定性浏览器执行”为核心的 BOSS 求职 Agent。
 
-## License / 许可证
+## 安装与启动
 
-本项目采用 **PolyForm Noncommercial License 1.0.0 + 单独商业授权** 的授权模式。
+项目使用 [uv](https://docs.astral.sh/uv/) 管理 Python 环境和依赖。
 
-- ✅ 允许个人学习、研究、实验和其他符合许可证条款的非商业使用。
-- ✅ 允许在非商业用途范围内修改和分发代码，但必须遵守 [`LICENSE`](./LICENSE) 中的完整条款。
-- ❌ 未经作者事先书面授权，不允许用于企业商业业务、收费 SaaS、商业产品集成、收费部署/定制/咨询、商业转售等商业用途。
-- 💼 如需商业使用，请先阅读 [`COMMERCIAL_LICENSE.md`](./COMMERCIAL_LICENSE.md) 并联系作者取得单独商业授权。
+首次拉取项目或依赖发生变化后，执行：
 
-商业授权联系：2629439590@qq.com  
-GitHub：<https://github.com/dengcanhui>
+```bash
+uv sync
+```
 
-> Commercial use requires a separate commercial license from the author in advance.
+`uv sync` 会根据 `pyproject.toml` 和 `uv.lock` 创建/更新项目的 `.venv`，并安装 `boss-seek-agent` 命令入口。
 
-完整非商业许可证：[`LICENSE`](./LICENSE)  
-商业授权说明：[`COMMERCIAL_LICENSE.md`](./COMMERCIAL_LICENSE.md)
+启动项目：
+
+```bash
+uv run boss-seek-agent
+```
+
+默认监听：
+
+```text
+127.0.0.1:8000
+```
+
+## 使用
+
+启动后打开：
+
+```text
+http://127.0.0.1:8000/
+```
+
+首次使用时，可在前端点击“打开 BOSS 登录”手工完成登录。浏览器登录状态会保存在项目的 `runtime/profile/` 目录，后续启动会自动复用。
+
+开发调试接口：
+
+```text
+http://127.0.0.1:8000/docs
+http://127.0.0.1:8000/health
+```
+
+运行测试：
+
+```bash
+uv run pytest -q
+```
+
+Pytest 的临时目录已固定到项目 `runtime/pytest`，避免 Windows 用户临时目录权限导致测试失败。
 
 ## 当前边界
 
@@ -179,27 +211,25 @@ BROWSER_PROFILE_DIR=runtime/profile
 BROWSER_HEADLESS=false
 ```
 
-## 启动
+## 运行效果
 
-```bash
-python -m venv .venv
-.venv\Scripts\activate
-pip install -e .
-uvicorn app.main:app --reload
-```
+![boss-seek-agent 运行界面 1](./docs/images/image1.png)
 
-打开：
+![boss-seek-agent 运行界面 2](./docs/images/image2.png)
 
-```text
-http://127.0.0.1:8000/
-http://127.0.0.1:8000/docs
-http://127.0.0.1:8000/health
-```
+## License / 许可证
 
-## 测试
+本项目采用 **PolyForm Noncommercial License 1.0.0 + 单独商业授权** 的授权模式。
 
-```bash
-python -m pytest -q
-```
+- ✅ 允许个人学习、研究、实验和其他符合许可证条款的非商业使用。
+- ✅ 允许在非商业用途范围内修改和分发代码，但必须遵守 [`LICENSE`](./LICENSE) 中的完整条款。
+- ❌ 未经作者事先书面授权，不允许用于企业商业业务、收费 SaaS、商业产品集成、收费部署/定制/咨询、商业转售等商业用途。
+- 💼 如需商业使用，请先阅读 [`COMMERCIAL_LICENSE.md`](./COMMERCIAL_LICENSE.md) 并联系作者取得单独商业授权。
 
-Pytest 的临时目录已固定到项目 `runtime/pytest`，避免 Windows 用户临时目录权限导致测试失败。
+商业授权联系：2629439590@qq.com  
+GitHub：<https://github.com/dengcanhui>
+
+> Commercial use requires a separate commercial license from the author in advance.
+
+完整非商业许可证：[`LICENSE`](./LICENSE)  
+商业授权说明：[`COMMERCIAL_LICENSE.md`](./COMMERCIAL_LICENSE.md)
