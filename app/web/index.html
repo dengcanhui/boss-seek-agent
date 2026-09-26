@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Boss Agent</title>
+  <link rel="stylesheet" href="/static/styles.css?v=20260925-1">
+</head>
+<body>
+  <div class="app-shell">
+    <aside id="app-sidebar" class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">B</span>
+        <div><strong>Boss Agent</strong></div>
+      </div>
+
+      <nav class="side-nav" aria-label="主导航">
+        <button class="nav-item" data-page="assistant" aria-controls="page-assistant">
+          <span class="nav-icon" aria-hidden="true">✦</span><span><strong>AI 助手</strong><small>对话规划搜索任务</small></span>
+        </button>
+        <button class="nav-item active" data-page="config" aria-controls="page-config" aria-current="page">
+          <span class="nav-icon" aria-hidden="true">⌘</span><span><strong>任务配置</strong><small>搜索队列与全局规则</small></span>
+        </button>
+        <button class="nav-item" data-page="history" aria-controls="page-history">
+          <span class="nav-icon" aria-hidden="true">↺</span><span><strong>历史任务</strong><small>回看已结束的搜索</small></span>
+        </button>
+        <button class="nav-item" data-page="jobs" aria-controls="page-jobs">
+          <span class="nav-icon" aria-hidden="true">▤</span><span><strong>岗位记录</strong><small>查看遍历过的岗位详情</small></span>
+        </button>
+      </nav>
+
+      <div class="sidebar-status" aria-live="polite">
+        <div class="status-heading"><span id="status-dot" class="status-dot"></span><span>当前任务</span></div>
+        <strong id="task-status">空闲</strong>
+        <small id="task-message">等待开始</small>
+      </div>
+      <p class="sidebar-note">任务与规则保存在本机<br>浏览器执行由本地 Worker 完成</p>
+    </aside>
+    <button id="sidebar-backdrop" class="sidebar-backdrop" type="button" aria-label="关闭导航"></button>
+
+    <div class="workspace">
+      <header class="workspace-header">
+        <button id="menu-toggle" class="menu-toggle" type="button" aria-controls="app-sidebar" aria-expanded="false">菜单</button>
+        <div>
+          <p id="page-eyebrow" class="page-eyebrow">WORKSPACE · CONFIG</p>
+          <h1 id="page-title">任务配置</h1>
+          <p id="page-description" class="page-description">设置搜索条件、维护任务队列并控制 BOSS 执行器。</p>
+        </div>
+      </header>
+
+      <main class="workspace-main">
+        <section id="page-config" class="page-view active" data-page="config">
+          <section class="hero card">
+            <div>
+              <span class="section-kicker">TASK CONTROL</span>
+              <h2>任务控制</h2>
+              <p>每组搜索参数都是一个独立任务，按优先级从小到大依次执行。</p>
+            </div>
+            <div class="actions">
+              <button id="login-btn" class="button secondary">打开 BOSS 登录</button>
+              <button id="new-task-btn" class="button primary">新建搜索任务</button>
+              <button id="start-queue-btn" class="button primary">开始任务队列</button>
+              <button id="stop-btn" class="button danger" disabled>停止</button>
+            </div>
+            <div class="progress" role="progressbar" aria-label="执行状态" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="progress-bar"></span></div>
+          </section>
+
+          <div class="task-config-layout">
+            <section class="card task-board-card">
+              <div class="section-title">
+                <div><span class="section-kicker">SEARCH QUEUE</span><h2>搜索任务</h2><p>AI 和手动创建的任务统一维护，执行器只处理待执行任务。</p></div>
+                <button id="refresh-search-tasks" class="text-button">刷新</button>
+              </div>
+              <div id="search-tasks-list" class="search-tasks-list"><p class="muted">正在载入搜索任务…</p></div>
+            </section>
+          </div>
+
+          <div id="task-editor" class="task-modal hidden" role="dialog" aria-modal="true" aria-labelledby="task-editor-title">
+            <button id="task-editor-backdrop" class="task-modal-backdrop" type="button" aria-label="关闭任务配置弹窗"></button>
+            <section class="card task-editor-panel">
+              <div class="section-title">
+                <div><span class="section-kicker">TASK EDITOR</span><h2 id="task-editor-title">新建搜索任务</h2><p>设置一组可独立执行的 BOSS 搜索参数。</p></div>
+                <button id="cancel-task-edit" class="text-button" type="button">取消</button>
+              </div>
+              <div class="form-grid">
+                <label class="wide">搜索关键词<input id="query" type="text" maxlength="100" placeholder="例如：Agent 开发"></label>
+                <div class="form-field">
+                  <label class="field-label" for="city-search">城市</label>
+                  <div id="city-picker" class="search-picker">
+                    <input id="city-search" type="text" maxlength="50" placeholder="输入城市名称，例如杭州" autocomplete="off">
+                    <div id="city-results" class="picker-results hidden" role="listbox"></div>
+                  </div>
+                  <select id="city" class="mapping-storage" hidden aria-hidden="true"></select>
+                </div>
+                <label>优先级<input id="task-priority" type="number" value="0" title="数字越小越先执行"></label>
+                <div class="form-field wide">
+                  <span class="field-label">求职类型 <small>不选择则默认不限</small></span>
+                  <div id="jobType-choices" class="choice-grid"></div>
+                  <select id="jobType" class="mapping-storage" hidden aria-hidden="true"></select>
+                </div>
+                <div class="form-field wide">
+                  <span class="field-label">薪资待遇 <small>不选择则默认不限</small></span>
+                  <div id="salary-choices" class="choice-grid"></div>
+                  <select id="salary" class="mapping-storage" hidden aria-hidden="true"></select>
+                </div>
+                <div class="form-field wide">
+                  <span class="field-label">工作经验 <small>可多选</small></span>
+                  <div id="experience-choices" class="choice-grid"></div>
+                  <select id="experience" class="mapping-storage" multiple hidden aria-hidden="true"></select>
+                </div>
+                <div class="form-field wide">
+                  <span class="field-label">学历要求 <small>可多选</small></span>
+                  <div id="degree-choices" class="choice-grid"></div>
+                  <select id="degree" class="mapping-storage" multiple hidden aria-hidden="true"></select>
+                </div>
+                <div class="form-field wide">
+                  <span class="field-label">公司规模 <small>可多选</small></span>
+                  <div id="scale-choices" class="choice-grid"></div>
+                  <select id="scale" class="mapping-storage" multiple hidden aria-hidden="true"></select>
+                </div>
+                <div class="form-field wide">
+                  <label class="field-label" for="industry-search">公司行业 <small>输入名称搜索，可多选</small></label>
+                  <div id="industry-picker" class="search-picker">
+                    <input id="industry-search" type="text" maxlength="50" placeholder="输入行业名称，例如互联网" autocomplete="off">
+                    <div id="industry-results" class="picker-results hidden" role="listbox"></div>
+                  </div>
+                  <div id="industry-selected" class="selected-chips hidden"></div>
+                  <select id="industry" class="mapping-storage" multiple hidden aria-hidden="true"></select>
+                </div>
+                <div class="form-field wide">
+                  <span class="field-label">融资阶段 <small>可多选</small></span>
+                  <div id="stage-choices" class="choice-grid"></div>
+                  <select id="stage" class="mapping-storage" multiple hidden aria-hidden="true"></select>
+                </div>
+                <p class="field-hint">界面只显示名称，保存时仍由后端任务编译器转换为 BOSS 参数代码。</p>
+              </div>
+              <div class="editor-actions">
+                <p id="task-editor-error" class="editor-error hidden" role="alert"></p>
+                <button id="save-task-btn" class="button primary" type="button">保存任务</button>
+              </div>
+            </section>
+          </div>
+
+          <section class="card global-config-card">
+            <div class="section-title">
+              <div><span class="section-kicker">GLOBAL SETTINGS</span><h2>全局配置</h2><p>这些规则应用到所有搜索任务，并在下一条任务开始时读取。</p></div>
+              <button id="save-global-config-btn" class="button secondary">保存全局配置</button>
+            </div>
+            <div class="form-grid blacklist-config">
+              <label>职位黑名单<textarea id="job_blacklist" rows="5" placeholder="例如：销售，驻场，纯外包"></textarea><small class="field-hint">多个关键词可用换行、英文逗号或中文逗号分隔</small></label>
+              <label>公司黑名单<textarea id="company_blacklist" rows="5" placeholder="例如：某某科技，某某外包"></textarea><small class="field-hint">多个关键词可用换行、英文逗号或中文逗号分隔</small></label>
+              <label>岗位详情黑名单<textarea id="description_blacklist" rows="5" placeholder="例如：驻场，996，不接受远程"></textarea><small class="field-hint">多个关键词可用换行、英文逗号或中文逗号分隔</small></label>
+            </div>
+            <div class="form-grid global-behavior-grid">
+              <label>单个搜索任务最大岗位数<input id="max_jobs_per_task" type="number" min="1" max="1000" step="1"><small class="field-hint">达到该数量后停止继续加载岗位</small></label>
+              <label>打招呼后最小等待（秒）<input id="greet_wait_min" type="number" min="0" max="3600" step="0.1"></label>
+              <label>打招呼后最大等待（秒）<input id="greet_wait_max" type="number" min="0" max="3600" step="0.1"></label>
+            </div>
+            <div class="toggles">
+              <label><input id="filter_inactive_over_week" type="checkbox"><span>过滤一周以上不活跃岗位（活跃描述含“周 / 月 / 年”时跳过）</span></label>
+            </div>
+          </section>
+        </section>
+
+        <section id="page-history" class="page-view" data-page="history" hidden>
+          <section class="card history-card">
+            <div class="section-title">
+              <div><span class="section-kicker">HISTORY</span><h2>历史任务</h2><p>已执行任务作为历史记录永久保留，不可编辑或删除；重新添加只会复制出一条新的待执行任务。</p></div>
+              <div class="actions"><button id="refresh-history-tasks" class="text-button">刷新</button></div>
+            </div>
+            <div class="table-wrap">
+              <table><thead><tr><th>任务</th><th>搜索条件</th><th>优先级</th><th>状态</th><th>更新时间</th><th></th></tr></thead><tbody id="history-tasks-body"></tbody></table>
+            </div>
+          </section>
+        </section>
+
+        <section id="page-jobs" class="page-view" data-page="jobs" hidden>
+          <section class="card history-card">
+            <div class="section-title">
+              <div><span class="section-kicker">JOB RECORDS</span><h2>岗位记录</h2><p>保存浏览器实际遍历过的岗位详情，并记录是否已经打过招呼。</p></div>
+              <div class="actions"><button id="refresh-job-records" class="text-button">刷新</button></div>
+            </div>
+            <div class="table-wrap">
+              <table class="job-records-table">
+                <thead><tr><th>岗位</th><th>公司</th><th>薪资 / 地点</th><th>招聘者</th><th>访问</th><th>打招呼</th><th>最近查看</th><th>详情</th></tr></thead>
+                <tbody id="job-records-body"><tr><td colspan="8" class="muted">正在载入岗位记录…</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section id="page-assistant" class="page-view" data-page="assistant" hidden>
+          <section class="assistant-workspace">
+            <div class="card chat-card">
+              <header class="chat-header">
+                <div class="chat-identity">
+                  <span class="chat-avatar" aria-hidden="true">✦</span>
+                  <div>
+                    <h2>AI 求职助手</h2>
+                    <p>说明求职方向，我会维护搜索任务；明确的长期偏好会自动沉淀为长期记忆。</p>
+                  </div>
+                </div>
+                <span class="badge">AI</span>
+              </header>
+
+              <div id="chat-messages" class="chat-messages" role="log" aria-live="polite"></div>
+
+              <div class="chat-compose">
+                <div class="composer">
+                  <textarea id="chat-input" rows="1" placeholder="告诉 AI 你想找什么岗位、城市、薪资或公司偏好…"></textarea>
+                  <button id="chat-send" class="composer-send" type="button" aria-label="发送">↑</button>
+                </div>
+                <p class="composer-hint">
+                  <span>Ctrl / ⌘ + Enter 发送，Enter 换行</span>
+                  <span class="privacy-note">AI 负责维护任务，浏览器执行仍由本地 Worker 完成</span>
+                </p>
+              </div>
+            </div>
+          </section>
+        </section>
+
+      </main>
+    </div>
+  </div>
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+  <script src="/static/app.js?v=20260925-1" type="module"></script>
+</body>
+</html>
