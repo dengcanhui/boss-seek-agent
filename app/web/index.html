@@ -191,12 +191,25 @@
 
         <section id="page-assistant" class="page-view" data-page="assistant" hidden>
           <section class="assistant-workspace">
+            <aside class="card conversation-sidebar">
+              <div class="conversation-sidebar-head">
+                <div>
+                  <span class="section-kicker">CONVERSATIONS</span>
+                  <h2>历史对话</h2>
+                </div>
+                <button id="new-conversation" class="conversation-new" type="button">＋ 新对话</button>
+              </div>
+              <div id="conversation-list" class="conversation-list">
+                <p class="conversation-empty">正在载入历史对话…</p>
+              </div>
+            </aside>
+
             <div class="card chat-card">
               <header class="chat-header">
                 <div class="chat-identity">
                   <span class="chat-avatar" aria-hidden="true">✦</span>
                   <div>
-                    <h2>AI 求职助手</h2>
+                    <h2 id="chat-current-title">AI 求职助手</h2>
                     <p>说明求职方向，我会维护搜索任务；明确的长期偏好会自动沉淀为长期记忆。</p>
                   </div>
                 </div>
@@ -223,6 +236,6 @@
     </div>
   </div>
   <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
-  <script src="/static/app.js?v=20260925-1" type="module"></script>
+  <script src="/static/app.js?v=20260926-1" type="module"></script>
 </body>
 </html>

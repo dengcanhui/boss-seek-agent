@@ -35,6 +35,14 @@ class AgentRuntime:
         self.boss_search_options: BossSearchOptionsService = boss_search_options
         self._conversation_locks: WeakValueDictionary[str, asyncio.Lock] = WeakValueDictionary()
 
+    def list_messages(self, conversation_id: str, limit: int = 100) -> list[dict[str, str]]:
+        """返回指定会话最近的聊天记录，按时间正序排列。"""
+        return self.chat_repository.recent(conversation_id, limit)
+
+    def list_conversations(self, limit: int = 50) -> list[dict[str, object]]:
+        """返回已有会话列表，最近有消息的会话排在前面。"""
+        return self.chat_repository.list_conversations(limit)
+
     async def run(self, conversation_id: str, user_message: str) -> str:
         """同一会话串行执行；不同会话之间仍可并发。"""
         lock = self._conversation_locks.setdefault(conversation_id, asyncio.Lock())

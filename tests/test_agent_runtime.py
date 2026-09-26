@@ -130,6 +130,28 @@ async def _different_conversations_can_overlap():
     assert llm.max_active == 2
 
 
+def test_agent_context_includes_previous_chat_history():
+    chat = FakeChatRepository()
+    chat.add("history", "user", "上一轮用户消息")
+    chat.add("history", "assistant", "上一轮助手回复")
+    llm = CaptureLLM()
+    runtime = AgentRuntime(
+        llm,
+        FakeRegistry(),
+        FakeMemory(chat),
+        chat,
+        FakeJobSeekTasks(),
+        FakeBossSearchOptions(),
+    )
+
+    assert asyncio.run(runtime.run("history", "这一轮消息")) == "ok"
+    assert llm.messages[1:] == [
+        {"role": "user", "content": "上一轮用户消息"},
+        {"role": "assistant", "content": "上一轮助手回复"},
+        {"role": "user", "content": "这一轮消息"},
+    ]
+
+
 def test_agent_context_includes_search_parameter_guide():
     chat = FakeChatRepository()
     llm = CaptureLLM()

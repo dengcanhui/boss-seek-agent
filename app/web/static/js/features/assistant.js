@@ -7,8 +7,16 @@ const SUGGESTIONS = [
   "把不合适的任务取消掉",
 ];
 
-const conversationId = sessionStorage.getItem("boss-agent-conversation-id") || crypto.randomUUID();
-sessionStorage.setItem("boss-agent-conversation-id", conversationId);
+const CONVERSATION_ID_KEY = "boss-agent-conversation-id";
+let conversationId = localStorage.getItem(CONVERSATION_ID_KEY)
+  || sessionStorage.getItem(CONVERSATION_ID_KEY)
+  || crypto.randomUUID();
+localStorage.setItem(CONVERSATION_ID_KEY, conversationId);
+
+function setConversationId(value) {
+  conversationId = value;
+  localStorage.setItem(CONVERSATION_ID_KEY, value);
+}
 
 function turnMarkup(message) {
   const assistant = message.role === "assistant";
@@ -37,6 +45,31 @@ function thinkingMarkup() {
     <span class="chat-avatar" aria-hidden="true">✦</span>
     <div class="chat-body"><div class="chat-bubble"><span class="chat-dots"><i></i><i></i><i></i></span></div></div>
   </article>`;
+}
+
+function formatConversationTime(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleString("zh-CN", {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function conversationMarkup(conversation) {
+  const active = conversation.conversation_id === conversationId;
+  return `<button
+      type="button"
+      class="conversation-item${active ? " active" : ""}"
+      data-conversation-id="${escapeHtml(conversation.conversation_id)}"
+      title="${escapeHtml(conversation.title)}"
+    >
+      <span class="conversation-item-title">${escapeHtml(conversation.title)}</span>
+      <span class="conversation-item-time">${escapeHtml(formatConversationTime(conversation.updated_at))}</span>
+    </button>`;
 }
 
 function bindTurns(container) {
@@ -90,10 +123,70 @@ function autoGrow(input) {
   input.style.height = `${Math.min(input.scrollHeight, 200)}px`;
 }
 
+function renderConversationList(conversations) {
+  const container = byId("conversation-list");
+  if (!conversations.length) {
+    container.innerHTML = `<p class="conversation-empty">还没有历史对话。发送第一条消息后会出现在这里。</p>`;
+    byId("chat-current-title").textContent = "AI 求职助手";
+    return;
+  }
+
+  container.innerHTML = conversations.map(conversationMarkup).join("");
+  const current = conversations.find((item) => item.conversation_id === conversationId);
+  byId("chat-current-title").textContent = current?.title || "新对话";
+
+  container.querySelectorAll(".conversation-item").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const nextId = button.dataset.conversationId;
+      if (!nextId || nextId === conversationId) return;
+      setConversationId(nextId);
+      await loadConversations();
+      await loadChatHistory();
+      byId("chat-input").focus();
+    });
+  });
+}
+
 export function renderEmptyChat() {
   const container = byId("chat-messages");
   container.innerHTML = emptyMarkup();
   bindTurns(container);
+}
+
+export async function loadConversations({selectLatestIfMissing = false} = {}) {
+  const conversations = await api("/api/chat/conversations?limit=50");
+  const currentExists = conversations.some((item) => item.conversation_id === conversationId);
+
+  if (selectLatestIfMissing && conversations.length && !currentExists) {
+    setConversationId(conversations[0].conversation_id);
+  }
+
+  renderConversationList(conversations);
+  return conversations;
+}
+
+export async function loadChatHistory() {
+  const requestedConversationId = conversationId;
+  const messages = await api(`/api/chat?conversation_id=${encodeURIComponent(requestedConversationId)}&limit=100`);
+  if (requestedConversationId !== conversationId) return;
+
+  const container = byId("chat-messages");
+  if (!messages.length) {
+    renderEmptyChat();
+    return;
+  }
+
+  container.innerHTML = messages.map(turnMarkup).join("");
+  bindTurns(container);
+  container.scrollTop = container.scrollHeight;
+}
+
+function startNewConversation() {
+  setConversationId(crypto.randomUUID());
+  byId("chat-current-title").textContent = "新对话";
+  renderEmptyChat();
+  loadConversations().catch((error) => toast(error.message));
+  byId("chat-input").focus();
 }
 
 export async function sendChatMessage() {
@@ -101,6 +194,7 @@ export async function sendChatMessage() {
   const content = input.value.trim();
   if (!content) return;
 
+  const requestConversationId = conversationId;
   const button = byId("chat-send");
   button.disabled = true;
   input.value = "";
@@ -111,13 +205,17 @@ export async function sendChatMessage() {
   try {
     const response = await api("/api/chat", {
       method: "POST",
-      body: {conversation_id: conversationId, message: content},
+      body: {conversation_id: requestConversationId, message: content},
     });
-    byId("chat-thinking")?.remove();
-    appendTurn({role: "assistant", content: response.reply || "这一步没有产生可显示的回复。"});
+
+    if (conversationId === requestConversationId) {
+      byId("chat-thinking")?.remove();
+      appendTurn({role: "assistant", content: response.reply || "这一步没有产生可显示的回复。"});
+    }
+    await loadConversations();
     window.dispatchEvent(new Event("boss:tasks-refresh"));
   } catch (error) {
-    byId("chat-thinking")?.remove();
+    if (conversationId === requestConversationId) byId("chat-thinking")?.remove();
     toast(error.message);
   } finally {
     button.disabled = false;
@@ -129,6 +227,7 @@ export function setupAssistant() {
   const input = byId("chat-input");
   input.addEventListener("input", () => autoGrow(input));
   byId("chat-send").addEventListener("click", () => sendChatMessage());
+  byId("new-conversation").addEventListener("click", startNewConversation);
   input.addEventListener("keydown", (event) => {
     if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
       event.preventDefault();
@@ -136,5 +235,11 @@ export function setupAssistant() {
     }
   });
   autoGrow(input);
-  renderEmptyChat();
+
+  loadConversations({selectLatestIfMissing: true})
+    .then(() => loadChatHistory())
+    .catch((error) => {
+      renderEmptyChat();
+      toast(error.message);
+    });
 }
