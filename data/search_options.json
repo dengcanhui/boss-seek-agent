@@ -1,0 +1,5910 @@
+{
+  "_meta": {
+    "source": "boss.saz",
+    "captured_at": "2026-09-17T10:51:51+08:00",
+    "generated_at": "2026-09-20T15:55:46.207656+08:00",
+    "endpoints": {
+      "filters": "/wapi/zpgeek/pc/all/filter/conditions.json",
+      "city": "/wapi/zpCommon/data/cityGroup.json",
+      "industry": "/wapi/zpCommon/data/industryFilterExemption"
+    },
+    "notes": [
+      "所有 code 均保存为字符串，可直接用于 BOSS 搜索请求。",
+      "城市搜索使用 code；area_code 只是电话区号，不可用于 city 参数。",
+      "code=0 表示不限；与其他值同时出现时应省略该筛选参数。",
+      "字典只来自响应正文，不保存 Cookie、令牌或其他请求头。"
+    ]
+  },
+  "jobType": [
+    {
+      "code": "0",
+      "name": "不限"
+    },
+    {
+      "code": "1901",
+      "name": "全职"
+    },
+    {
+      "code": "1903",
+      "name": "兼职"
+    }
+  ],
+  "salary": [
+    {
+      "code": "0",
+      "name": "不限"
+    },
+    {
+      "code": "402",
+      "name": "3K以下"
+    },
+    {
+      "code": "403",
+      "name": "3-5K"
+    },
+    {
+      "code": "404",
+      "name": "5-10K"
+    },
+    {
+      "code": "405",
+      "name": "10-20K"
+    },
+    {
+      "code": "406",
+      "name": "20-50K"
+    },
+    {
+      "code": "407",
+      "name": "50K以上"
+    }
+  ],
+  "experience": [
+    {
+      "code": "0",
+      "name": "不限"
+    },
+    {
+      "code": "108",
+      "name": "在校生"
+    },
+    {
+      "code": "102",
+      "name": "应届生"
+    },
+    {
+      "code": "101",
+      "name": "经验不限"
+    },
+    {
+      "code": "103",
+      "name": "1年以内"
+    },
+    {
+      "code": "104",
+      "name": "1-3年"
+    },
+    {
+      "code": "105",
+      "name": "3-5年"
+    },
+    {
+      "code": "106",
+      "name": "5-10年"
+    },
+    {
+      "code": "107",
+      "name": "10年以上"
+    }
+  ],
+  "degree": [
+    {
+      "code": "0",
+      "name": "不限"
+    },
+    {
+      "code": "209",
+      "name": "初中及以下"
+    },
+    {
+      "code": "208",
+      "name": "中专/中技"
+    },
+    {
+      "code": "206",
+      "name": "高中"
+    },
+    {
+      "code": "202",
+      "name": "大专"
+    },
+    {
+      "code": "203",
+      "name": "本科"
+    },
+    {
+      "code": "204",
+      "name": "硕士"
+    },
+    {
+      "code": "205",
+      "name": "博士"
+    }
+  ],
+  "scale": [
+    {
+      "code": "0",
+      "name": "不限"
+    },
+    {
+      "code": "301",
+      "name": "0-20人"
+    },
+    {
+      "code": "302",
+      "name": "20-99人"
+    },
+    {
+      "code": "303",
+      "name": "100-499人"
+    },
+    {
+      "code": "304",
+      "name": "500-999人"
+    },
+    {
+      "code": "305",
+      "name": "1000-9999人"
+    },
+    {
+      "code": "306",
+      "name": "10000人以上"
+    }
+  ],
+  "stage": [
+    {
+      "code": "0",
+      "name": "不限"
+    },
+    {
+      "code": "801",
+      "name": "未融资"
+    },
+    {
+      "code": "802",
+      "name": "天使轮"
+    },
+    {
+      "code": "803",
+      "name": "A轮"
+    },
+    {
+      "code": "804",
+      "name": "B轮"
+    },
+    {
+      "code": "805",
+      "name": "C轮"
+    },
+    {
+      "code": "806",
+      "name": "D轮及以上"
+    },
+    {
+      "code": "807",
+      "name": "已上市"
+    },
+    {
+      "code": "808",
+      "name": "不需要融资"
+    }
+  ],
+  "city": [
+    {
+      "code": "100010000",
+      "name": "全国",
+      "first_char": null,
+      "hot": true,
+      "area_code": "",
+      "region_code": null,
+      "center_geo": null
+    },
+    {
+      "code": "101070300",
+      "name": "鞍山",
+      "first_char": "A",
+      "hot": false,
+      "area_code": "0412",
+      "region_code": "210300",
+      "center_geo": "122.994183,41.108239"
+    },
+    {
+      "code": "101081200",
+      "name": "阿拉善盟",
+      "first_char": "A",
+      "hot": false,
+      "area_code": "0483",
+      "region_code": "152900",
+      "center_geo": "105.729135,38.851554"
+    },
+    {
+      "code": "101110700",
+      "name": "安康",
+      "first_char": "A",
+      "hot": false,
+      "area_code": "0915",
+      "region_code": "610900",
+      "center_geo": "109.029017,32.685435"
+    },
+    {
+      "code": "101131000",
+      "name": "阿克苏地区",
+      "first_char": "A",
+      "hot": false,
+      "area_code": "0997",
+      "region_code": "652900",
+      "center_geo": "80.265068,41.170712"
+    },
+    {
+      "code": "101131500",
+      "name": "阿勒泰地区",
+      "first_char": "A",
+      "hot": false,
+      "area_code": "0906",
+      "region_code": "654300",
+      "center_geo": "88.141253,47.844924"
+    },
+    {
+      "code": "101131700",
+      "name": "阿拉尔",
+      "first_char": "A",
+      "hot": false,
+      "area_code": "1997",
+      "region_code": "659002",
+      "center_geo": "81.280532,40.547205"
+    },
+    {
+      "code": "101140700",
+      "name": "阿里地区",
+      "first_char": "A",
+      "hot": false,
+      "area_code": "0897",
+      "region_code": "542500",
+      "center_geo": "80.105786,32.500987"
+    },
+    {
+      "code": "101180200",
+      "name": "安阳",
+      "first_char": "A",
+      "hot": false,
+      "area_code": "0372",
+      "region_code": "410500",
+      "center_geo": "114.39248,36.098779"
+    },
+    {
+      "code": "101220600",
+      "name": "安庆",
+      "first_char": "A",
+      "hot": false,
+      "area_code": "0556",
+      "region_code": "340800",
+      "center_geo": "117.115349,30.531828"
+    },
+    {
+      "code": "101260300",
+      "name": "安顺",
+      "first_char": "A",
+      "hot": false,
+      "area_code": "0853",
+      "region_code": "520400",
+      "center_geo": "105.9476,26.253103"
+    },
+    {
+      "code": "101271900",
+      "name": "阿坝藏族羌族自治州",
+      "first_char": "A",
+      "hot": false,
+      "area_code": "0837",
+      "region_code": "513200",
+      "center_geo": "102.224504,31.899427"
+    },
+    {
+      "code": "101330100",
+      "name": "澳门",
+      "first_char": "A",
+      "hot": false,
+      "area_code": "1853",
+      "region_code": "820000",
+      "center_geo": "113.543076,22.186927"
+    },
+    {
+      "code": "101010100",
+      "name": "北京",
+      "first_char": "B",
+      "hot": true,
+      "area_code": "010",
+      "region_code": "110000",
+      "center_geo": "116.407387,39.904179"
+    },
+    {
+      "code": "101060500",
+      "name": "白城",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "0436",
+      "region_code": "220800",
+      "center_geo": "122.838102,45.620131"
+    },
+    {
+      "code": "101060800",
+      "name": "白山",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "0439",
+      "region_code": "220600",
+      "center_geo": "126.414274,41.944132"
+    },
+    {
+      "code": "101070500",
+      "name": "本溪",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "0414",
+      "region_code": "210500",
+      "center_geo": "123.685054,41.486921"
+    },
+    {
+      "code": "101080200",
+      "name": "包头",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "0472",
+      "region_code": "150200",
+      "center_geo": "109.95315,40.621327"
+    },
+    {
+      "code": "101080800",
+      "name": "巴彦淖尔",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "0478",
+      "region_code": "150800",
+      "center_geo": "107.387767,40.742987"
+    },
+    {
+      "code": "101090200",
+      "name": "保定",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "0312",
+      "region_code": "130600",
+      "center_geo": "115.464523,38.874476"
+    },
+    {
+      "code": "101110900",
+      "name": "宝鸡",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "0917",
+      "region_code": "610300",
+      "center_geo": "107.237682,34.362862"
+    },
+    {
+      "code": "101121100",
+      "name": "滨州",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "0543",
+      "region_code": "371600",
+      "center_geo": "117.970731,37.382687"
+    },
+    {
+      "code": "101130400",
+      "name": "巴音郭楞蒙古自治州",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "0996",
+      "region_code": "652800",
+      "center_geo": "86.145298,41.764115"
+    },
+    {
+      "code": "101130500",
+      "name": "博尔塔拉蒙古自治州",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "0909",
+      "region_code": "652700",
+      "center_geo": "82.066363,44.906039"
+    },
+    {
+      "code": "101132100",
+      "name": "北屯市",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "1906",
+      "region_code": "659005",
+      "center_geo": "87.834419,47.326733"
+    },
+    {
+      "code": "101132700",
+      "name": "白杨市",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "101130110",
+      "region_code": "659012",
+      "center_geo": "82.896936,46.727959"
+    },
+    {
+      "code": "101161000",
+      "name": "白银",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "0943",
+      "region_code": "620400",
+      "center_geo": "104.138872,36.545123"
+    },
+    {
+      "code": "101220200",
+      "name": "蚌埠",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "0552",
+      "region_code": "340300",
+      "center_geo": "117.388566,32.91682"
+    },
+    {
+      "code": "101220900",
+      "name": "亳州",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "0558",
+      "region_code": "341600",
+      "center_geo": "115.778588,33.846285"
+    },
+    {
+      "code": "101260500",
+      "name": "毕节",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "0857",
+      "region_code": "520500",
+      "center_geo": "105.291544,27.283615"
+    },
+    {
+      "code": "101270900",
+      "name": "巴中",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "0827",
+      "region_code": "511900",
+      "center_geo": "106.747548,31.867853"
+    },
+    {
+      "code": "101290300",
+      "name": "保山",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "0875",
+      "region_code": "530500",
+      "center_geo": "99.161489,25.112018"
+    },
+    {
+      "code": "101301000",
+      "name": "百色",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "0776",
+      "region_code": "451000",
+      "center_geo": "106.61869,23.90307"
+    },
+    {
+      "code": "101301300",
+      "name": "北海",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "0779",
+      "region_code": "450500",
+      "center_geo": "109.120248,21.481305"
+    },
+    {
+      "code": "101311400",
+      "name": "白沙黎族自治县",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "802",
+      "region_code": "469025",
+      "center_geo": "109.4429,19.221641"
+    },
+    {
+      "code": "101311800",
+      "name": "保亭黎族苗族自治县",
+      "first_char": "B",
+      "hot": false,
+      "area_code": "801",
+      "region_code": "469029",
+      "center_geo": "109.700279,18.640339"
+    },
+    {
+      "code": "101040100",
+      "name": "重庆",
+      "first_char": "C",
+      "hot": true,
+      "area_code": "023",
+      "region_code": "500000",
+      "center_geo": "106.551787,29.56268"
+    },
+    {
+      "code": "101060100",
+      "name": "长春",
+      "first_char": "C",
+      "hot": false,
+      "area_code": "0431",
+      "region_code": "220100",
+      "center_geo": "125.323643,43.816996"
+    },
+    {
+      "code": "101071200",
+      "name": "朝阳",
+      "first_char": "C",
+      "hot": false,
+      "area_code": "0421",
+      "region_code": "211300",
+      "center_geo": "120.488801,41.601855"
+    },
+    {
+      "code": "101080500",
+      "name": "赤峰",
+      "first_char": "C",
+      "hot": false,
+      "area_code": "0476",
+      "region_code": "150400",
+      "center_geo": "118.887613,42.256876"
+    },
+    {
+      "code": "101090400",
+      "name": "承德",
+      "first_char": "C",
+      "hot": false,
+      "area_code": "0314",
+      "region_code": "130800",
+      "center_geo": "117.962749,40.952942"
+    },
+    {
+      "code": "101090700",
+      "name": "沧州",
+      "first_char": "C",
+      "hot": false,
+      "area_code": "0317",
+      "region_code": "130900",
+      "center_geo": "116.838715,38.304676"
+    },
+    {
+      "code": "101100500",
+      "name": "长治",
+      "first_char": "C",
+      "hot": false,
+      "area_code": "0355",
+      "region_code": "140400",
+      "center_geo": "113.117394,36.195142"
+    },
+    {
+      "code": "101130300",
+      "name": "昌吉回族自治州",
+      "first_char": "C",
+      "hot": false,
+      "area_code": "0994",
+      "region_code": "652300",
+      "center_geo": "87.308995,44.011044"
+    },
+    {
+      "code": "101140300",
+      "name": "昌都",
+      "first_char": "C",
+      "hot": false,
+      "area_code": "0895",
+      "region_code": "540300",
+      "center_geo": "97.170425,31.142879"
+    },
+    {
+      "code": "101191100",
+      "name": "常州",
+      "first_char": "C",
+      "hot": false,
+      "area_code": "0519",
+      "region_code": "320400",
+      "center_geo": "119.974092,31.811313"
+    },
+    {
+      "code": "101221000",
+      "name": "滁州",
+      "first_char": "C",
+      "hot": false,
+      "area_code": "0550",
+      "region_code": "341100",
+      "center_geo": "118.333439,32.255904"
+    },
+    {
+      "code": "101221500",
+      "name": "池州",
+      "first_char": "C",
+      "hot": false,
+      "area_code": "0566",
+      "region_code": "341700",
+      "center_geo": "117.495663,30.674264"
+    },
+    {
+      "code": "101250100",
+      "name": "长沙",
+      "first_char": "C",
+      "hot": true,
+      "area_code": "0731",
+      "region_code": "430100",
+      "center_geo": "112.938882,28.228304"
+    },
+    {
+      "code": "101250500",
+      "name": "郴州",
+      "first_char": "C",
+      "hot": false,
+      "area_code": "0735",
+      "region_code": "431000",
+      "center_geo": "113.015517,25.770117"
+    },
+    {
+      "code": "101250600",
+      "name": "常德",
+      "first_char": "C",
+      "hot": false,
+      "area_code": "0736",
+      "region_code": "430700",
+      "center_geo": "111.69905,29.031446"
+    },
+    {
+      "code": "101270100",
+      "name": "成都",
+      "first_char": "C",
+      "hot": true,
+      "area_code": "028",
+      "region_code": "510100",
+      "center_geo": "104.066301,30.572961"
+    },
+    {
+      "code": "101281500",
+      "name": "潮州",
+      "first_char": "C",
+      "hot": false,
+      "area_code": "0768",
+      "region_code": "445100",
+      "center_geo": "116.621901,23.657662"
+    },
+    {
+      "code": "101291700",
+      "name": "楚雄彝族自治州",
+      "first_char": "C",
+      "hot": false,
+      "area_code": "0878",
+      "region_code": "532300",
+      "center_geo": "101.528304,25.045678"
+    },
+    {
+      "code": "101300200",
+      "name": "崇左",
+      "first_char": "C",
+      "hot": false,
+      "area_code": "1771",
+      "region_code": "451400",
+      "center_geo": "107.364973,22.377139"
+    },
+    {
+      "code": "101311200",
+      "name": "澄迈",
+      "first_char": "C",
+      "hot": false,
+      "area_code": "804",
+      "region_code": "469023",
+      "center_geo": "110.007497,19.738885"
+    },
+    {
+      "code": "101311500",
+      "name": "昌江黎族自治县",
+      "first_char": "C",
+      "hot": false,
+      "area_code": "803",
+      "region_code": "469026",
+      "center_geo": "109.055783,19.298139"
+    },
+    {
+      "code": "101050800",
+      "name": "大庆",
+      "first_char": "D",
+      "hot": false,
+      "area_code": "0459",
+      "region_code": "230600",
+      "center_geo": "125.104078,46.589498"
+    },
+    {
+      "code": "101051300",
+      "name": "大兴安岭地区",
+      "first_char": "D",
+      "hot": false,
+      "area_code": "0457",
+      "region_code": "232700",
+      "center_geo": "124.11786,50.41129"
+    },
+    {
+      "code": "101070200",
+      "name": "大连",
+      "first_char": "D",
+      "hot": false,
+      "area_code": "0411",
+      "region_code": "210200",
+      "center_geo": "121.614786,38.913962"
+    },
+    {
+      "code": "101070600",
+      "name": "丹东",
+      "first_char": "D",
+      "hot": false,
+      "area_code": "0415",
+      "region_code": "210600",
+      "center_geo": "124.354419,40.000646"
+    },
+    {
+      "code": "101100200",
+      "name": "大同",
+      "first_char": "D",
+      "hot": false,
+      "area_code": "0352",
+      "region_code": "140200",
+      "center_geo": "113.366749,40.09711"
+    },
+    {
+      "code": "101120400",
+      "name": "德州",
+      "first_char": "D",
+      "hot": false,
+      "area_code": "0534",
+      "region_code": "371400",
+      "center_geo": "116.359244,37.436492"
+    },
+    {
+      "code": "101121200",
+      "name": "东营",
+      "first_char": "D",
+      "hot": false,
+      "area_code": "0546",
+      "region_code": "370500",
+      "center_geo": "118.674633,37.433992"
+    },
+    {
+      "code": "101160200",
+      "name": "定西",
+      "first_char": "D",
+      "hot": false,
+      "area_code": "0932",
+      "region_code": "621100",
+      "center_geo": "104.592342,35.607947"
+    },
+    {
+      "code": "101270600",
+      "name": "达州",
+      "first_char": "D",
+      "hot": false,
+      "area_code": "0818",
+      "region_code": "511700",
+      "center_geo": "107.46778,31.209278"
+    },
+    {
+      "code": "101271700",
+      "name": "德阳",
+      "first_char": "D",
+      "hot": false,
+      "area_code": "0838",
+      "region_code": "510600",
+      "center_geo": "104.397795,31.127449"
+    },
+    {
+      "code": "101281600",
+      "name": "东莞",
+      "first_char": "D",
+      "hot": false,
+      "area_code": "0769",
+      "region_code": "441900",
+      "center_geo": "113.751884,23.021016"
+    },
+    {
+      "code": "101282200",
+      "name": "东沙群岛",
+      "first_char": "D",
+      "hot": false,
+      "area_code": "",
+      "region_code": "441581",
+      "center_geo": "115.652142,22.91874"
+    },
+    {
+      "code": "101291300",
+      "name": "德宏傣族景颇族自治州",
+      "first_char": "D",
+      "hot": false,
+      "area_code": "0692",
+      "region_code": "533100",
+      "center_geo": "98.585621,24.433146"
+    },
+    {
+      "code": "101291500",
+      "name": "迪庆藏族自治州",
+      "first_char": "D",
+      "hot": false,
+      "area_code": "0887",
+      "region_code": "533400",
+      "center_geo": "99.70211,27.819149"
+    },
+    {
+      "code": "101291600",
+      "name": "大理白族自治州",
+      "first_char": "D",
+      "hot": false,
+      "area_code": "0872",
+      "region_code": "532900",
+      "center_geo": "100.267608,25.606548"
+    },
+    {
+      "code": "101310400",
+      "name": "儋州",
+      "first_char": "D",
+      "hot": false,
+      "area_code": "805",
+      "region_code": "460400",
+      "center_geo": "109.580812,19.520948"
+    },
+    {
+      "code": "101310900",
+      "name": "东方",
+      "first_char": "D",
+      "hot": false,
+      "area_code": "807",
+      "region_code": "469007",
+      "center_geo": "108.651829,19.095187"
+    },
+    {
+      "code": "101311000",
+      "name": "定安",
+      "first_char": "D",
+      "hot": false,
+      "area_code": "806",
+      "region_code": "469021",
+      "center_geo": "110.358001,19.681215"
+    },
+    {
+      "code": "101080600",
+      "name": "鄂尔多斯",
+      "first_char": "E",
+      "hot": false,
+      "area_code": "0477",
+      "region_code": "150600",
+      "center_geo": "109.782473,39.608744"
+    },
+    {
+      "code": "101200300",
+      "name": "鄂州",
+      "first_char": "E",
+      "hot": false,
+      "area_code": "0711",
+      "region_code": "420700",
+      "center_geo": "114.894909,30.391461"
+    },
+    {
+      "code": "101201300",
+      "name": "恩施土家族苗族自治州",
+      "first_char": "E",
+      "hot": false,
+      "area_code": "0718",
+      "region_code": "422800",
+      "center_geo": "109.488076,30.272104"
+    },
+    {
+      "code": "101070400",
+      "name": "抚顺",
+      "first_char": "F",
+      "hot": false,
+      "area_code": "0413",
+      "region_code": "210400",
+      "center_geo": "123.957053,41.881311"
+    },
+    {
+      "code": "101070900",
+      "name": "阜新",
+      "first_char": "F",
+      "hot": false,
+      "area_code": "0418",
+      "region_code": "210900",
+      "center_geo": "121.670052,42.022028"
+    },
+    {
+      "code": "101220800",
+      "name": "阜阳",
+      "first_char": "F",
+      "hot": false,
+      "area_code": "1558",
+      "region_code": "341200",
+      "center_geo": "115.814252,32.891032"
+    },
+    {
+      "code": "101230100",
+      "name": "福州",
+      "first_char": "F",
+      "hot": false,
+      "area_code": "0591",
+      "region_code": "350100",
+      "center_geo": "119.296411,26.074286"
+    },
+    {
+      "code": "101240400",
+      "name": "抚州",
+      "first_char": "F",
+      "hot": false,
+      "area_code": "0794",
+      "region_code": "361000",
+      "center_geo": "116.358054,27.948979"
+    },
+    {
+      "code": "101280800",
+      "name": "佛山",
+      "first_char": "F",
+      "hot": false,
+      "area_code": "0757",
+      "region_code": "440600",
+      "center_geo": "113.121586,23.021351"
+    },
+    {
+      "code": "101301400",
+      "name": "防城港",
+      "first_char": "F",
+      "hot": false,
+      "area_code": "0770",
+      "region_code": "450600",
+      "center_geo": "108.35467,21.686732"
+    },
+    {
+      "code": "101150600",
+      "name": "果洛藏族自治州",
+      "first_char": "G",
+      "hot": false,
+      "area_code": "0975",
+      "region_code": "632600",
+      "center_geo": "100.245161,34.472179"
+    },
+    {
+      "code": "101161400",
+      "name": "甘南藏族自治州",
+      "first_char": "G",
+      "hot": false,
+      "area_code": "0941",
+      "region_code": "623000",
+      "center_geo": "102.911736,34.983266"
+    },
+    {
+      "code": "101170400",
+      "name": "固原",
+      "first_char": "G",
+      "hot": false,
+      "area_code": "0954",
+      "region_code": "640400",
+      "center_geo": "106.24267,36.01628"
+    },
+    {
+      "code": "101240700",
+      "name": "赣州",
+      "first_char": "G",
+      "hot": false,
+      "area_code": "0797",
+      "region_code": "360700",
+      "center_geo": "114.933494,25.831139"
+    },
+    {
+      "code": "101260100",
+      "name": "贵阳",
+      "first_char": "G",
+      "hot": false,
+      "area_code": "0851",
+      "region_code": "520100",
+      "center_geo": "106.628201,26.646694"
+    },
+    {
+      "code": "101270800",
+      "name": "广安",
+      "first_char": "G",
+      "hot": false,
+      "area_code": "0826",
+      "region_code": "511600",
+      "center_geo": "106.632647,30.456354"
+    },
+    {
+      "code": "101271800",
+      "name": "广元",
+      "first_char": "G",
+      "hot": false,
+      "area_code": "0839",
+      "region_code": "510800",
+      "center_geo": "105.844004,32.435774"
+    },
+    {
+      "code": "101272100",
+      "name": "甘孜藏族自治州",
+      "first_char": "G",
+      "hot": false,
+      "area_code": "0836",
+      "region_code": "513300",
+      "center_geo": "101.96231,30.04952"
+    },
+    {
+      "code": "101280100",
+      "name": "广州",
+      "first_char": "G",
+      "hot": true,
+      "area_code": "020",
+      "region_code": "440100",
+      "center_geo": "113.264499,23.130061"
+    },
+    {
+      "code": "101300500",
+      "name": "桂林",
+      "first_char": "G",
+      "hot": false,
+      "area_code": "0773",
+      "region_code": "450300",
+      "center_geo": "110.179752,25.235615"
+    },
+    {
+      "code": "101300800",
+      "name": "贵港",
+      "first_char": "G",
+      "hot": false,
+      "area_code": "1755",
+      "region_code": "450800",
+      "center_geo": "109.598903,23.11182"
+    },
+    {
+      "code": "101050100",
+      "name": "哈尔滨",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0451",
+      "region_code": "230100",
+      "center_geo": "126.53505,45.802981"
+    },
+    {
+      "code": "101050600",
+      "name": "黑河",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0456",
+      "region_code": "231100",
+      "center_geo": "127.528226,50.244887"
+    },
+    {
+      "code": "101051100",
+      "name": "鹤岗",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0468",
+      "region_code": "230400",
+      "center_geo": "130.297687,47.350659"
+    },
+    {
+      "code": "101071400",
+      "name": "葫芦岛",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0429",
+      "region_code": "211400",
+      "center_geo": "120.836783,40.710974"
+    },
+    {
+      "code": "101080100",
+      "name": "呼和浩特",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0471",
+      "region_code": "150100",
+      "center_geo": "111.748814,40.842127"
+    },
+    {
+      "code": "101080700",
+      "name": "呼伦贝尔",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0470",
+      "region_code": "150700",
+      "center_geo": "119.77845,49.166536"
+    },
+    {
+      "code": "101090800",
+      "name": "衡水",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0318",
+      "region_code": "131100",
+      "center_geo": "115.668987,37.739367"
+    },
+    {
+      "code": "101091000",
+      "name": "邯郸",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0310",
+      "region_code": "130400",
+      "center_geo": "114.53915,36.625849"
+    },
+    {
+      "code": "101110800",
+      "name": "汉中",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0916",
+      "region_code": "610700",
+      "center_geo": "107.02319,33.066373"
+    },
+    {
+      "code": "101121000",
+      "name": "菏泽",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0530",
+      "region_code": "371700",
+      "center_geo": "115.479646,35.234309"
+    },
+    {
+      "code": "101130900",
+      "name": "哈密",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0902",
+      "region_code": "650500",
+      "center_geo": "93.515053,42.819346"
+    },
+    {
+      "code": "101131300",
+      "name": "和田地区",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0903",
+      "region_code": "653200",
+      "center_geo": "79.921646,37.114406"
+    },
+    {
+      "code": "101132600",
+      "name": "胡杨河市",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "1011313600",
+      "region_code": "659010",
+      "center_geo": "84.827592,44.692894"
+    },
+    {
+      "code": "101150200",
+      "name": "海东",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0972",
+      "region_code": "630200",
+      "center_geo": "102.41064,36.473448"
+    },
+    {
+      "code": "101150300",
+      "name": "海北藏族自治州",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0970",
+      "region_code": "632200",
+      "center_geo": "100.900944,36.954612"
+    },
+    {
+      "code": "101150400",
+      "name": "黄南藏族自治州",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0973",
+      "region_code": "632300",
+      "center_geo": "102.015397,35.519317"
+    },
+    {
+      "code": "101150500",
+      "name": "海南藏族自治州",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0974",
+      "region_code": "632500",
+      "center_geo": "100.622647,36.296399"
+    },
+    {
+      "code": "101150800",
+      "name": "海西蒙古族藏族自治州",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0977",
+      "region_code": "632800",
+      "center_geo": "97.33197,37.348114"
+    },
+    {
+      "code": "101181200",
+      "name": "鹤壁",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0392",
+      "region_code": "410600",
+      "center_geo": "114.297305,35.748329"
+    },
+    {
+      "code": "101190900",
+      "name": "淮安",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0517",
+      "region_code": "320800",
+      "center_geo": "119.113166,33.551495"
+    },
+    {
+      "code": "101200500",
+      "name": "黄冈",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0713",
+      "region_code": "421100",
+      "center_geo": "114.872425,30.453722"
+    },
+    {
+      "code": "101200600",
+      "name": "黄石",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0714",
+      "region_code": "420200",
+      "center_geo": "115.038999,30.201082"
+    },
+    {
+      "code": "101210100",
+      "name": "杭州",
+      "first_char": "H",
+      "hot": true,
+      "area_code": "0571",
+      "region_code": "330100",
+      "center_geo": "120.209903,30.246566"
+    },
+    {
+      "code": "101210200",
+      "name": "湖州",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0572",
+      "region_code": "330500",
+      "center_geo": "120.086881,30.894178"
+    },
+    {
+      "code": "101220100",
+      "name": "合肥",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0551",
+      "region_code": "340100",
+      "center_geo": "117.227267,31.820567"
+    },
+    {
+      "code": "101220400",
+      "name": "淮南",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0554",
+      "region_code": "340400",
+      "center_geo": "117.018603,32.585384"
+    },
+    {
+      "code": "101221100",
+      "name": "淮北",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0561",
+      "region_code": "340600",
+      "center_geo": "116.798362,33.956264"
+    },
+    {
+      "code": "101221600",
+      "name": "黄山",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0559",
+      "region_code": "341000",
+      "center_geo": "118.337643,29.714886"
+    },
+    {
+      "code": "101250400",
+      "name": "衡阳",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0734",
+      "region_code": "430400",
+      "center_geo": "112.572016,26.894216"
+    },
+    {
+      "code": "101251200",
+      "name": "怀化",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0745",
+      "region_code": "431200",
+      "center_geo": "110.001598,27.569813"
+    },
+    {
+      "code": "101280300",
+      "name": "惠州",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0752",
+      "region_code": "441300",
+      "center_geo": "114.415587,23.112368"
+    },
+    {
+      "code": "101281200",
+      "name": "河源",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0762",
+      "region_code": "441600",
+      "center_geo": "114.700215,23.744276"
+    },
+    {
+      "code": "101291200",
+      "name": "红河哈尼族彝族自治州",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0873",
+      "region_code": "532500",
+      "center_geo": "103.374873,23.363129"
+    },
+    {
+      "code": "101300700",
+      "name": "贺州",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "1774",
+      "region_code": "451100",
+      "center_geo": "111.567216,24.404182"
+    },
+    {
+      "code": "101301200",
+      "name": "河池",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0778",
+      "region_code": "451200",
+      "center_geo": "108.63639,24.48523"
+    },
+    {
+      "code": "101310100",
+      "name": "海口",
+      "first_char": "H",
+      "hot": false,
+      "area_code": "0898",
+      "region_code": "460100",
+      "center_geo": "110.200162,20.046316"
+    },
+    {
+      "code": "101050400",
+      "name": "佳木斯",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "0454",
+      "region_code": "230800",
+      "center_geo": "130.318916,46.800002"
+    },
+    {
+      "code": "101051000",
+      "name": "鸡西",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "0467",
+      "region_code": "230300",
+      "center_geo": "130.969385,45.295087"
+    },
+    {
+      "code": "101060200",
+      "name": "吉林",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "0432",
+      "region_code": "220200",
+      "center_geo": "126.549719,43.838132"
+    },
+    {
+      "code": "101070700",
+      "name": "锦州",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "0416",
+      "region_code": "210700",
+      "center_geo": "121.126859,41.096114"
+    },
+    {
+      "code": "101100400",
+      "name": "晋中",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "0354",
+      "region_code": "140700",
+      "center_geo": "112.752633,37.688006"
+    },
+    {
+      "code": "101100600",
+      "name": "晋城",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "0356",
+      "region_code": "140500",
+      "center_geo": "112.852022,35.491315"
+    },
+    {
+      "code": "101120100",
+      "name": "济南",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "0531",
+      "region_code": "370100",
+      "center_geo": "117.120128,36.652069"
+    },
+    {
+      "code": "101120700",
+      "name": "济宁",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "0537",
+      "region_code": "370800",
+      "center_geo": "116.587116,35.415117"
+    },
+    {
+      "code": "101160600",
+      "name": "金昌",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "0935",
+      "region_code": "620300",
+      "center_geo": "102.187972,38.521468"
+    },
+    {
+      "code": "101160800",
+      "name": "酒泉",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "0937",
+      "region_code": "620900",
+      "center_geo": "98.49432,39.733416"
+    },
+    {
+      "code": "101161200",
+      "name": "嘉峪关",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "1937",
+      "region_code": "620200",
+      "center_geo": "98.2882,39.77325"
+    },
+    {
+      "code": "101181100",
+      "name": "焦作",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "0391",
+      "region_code": "410800",
+      "center_geo": "113.241902,35.215726"
+    },
+    {
+      "code": "101181800",
+      "name": "济源",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "1391",
+      "region_code": "419001",
+      "center_geo": "112.602347,35.069057"
+    },
+    {
+      "code": "101200800",
+      "name": "荆州",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "0716",
+      "region_code": "421000",
+      "center_geo": "112.24143,30.336282"
+    },
+    {
+      "code": "101201200",
+      "name": "荆门",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "0724",
+      "region_code": "420800",
+      "center_geo": "112.199009,31.035445"
+    },
+    {
+      "code": "101210300",
+      "name": "嘉兴",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "0573",
+      "region_code": "330400",
+      "center_geo": "120.755623,30.746814"
+    },
+    {
+      "code": "101210900",
+      "name": "金华",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "0579",
+      "region_code": "330700",
+      "center_geo": "119.647265,29.079195"
+    },
+    {
+      "code": "101240200",
+      "name": "九江",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "0792",
+      "region_code": "360400",
+      "center_geo": "115.95356,29.66116"
+    },
+    {
+      "code": "101240600",
+      "name": "吉安",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "0796",
+      "region_code": "360800",
+      "center_geo": "114.96681,27.091243"
+    },
+    {
+      "code": "101240800",
+      "name": "景德镇",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "0798",
+      "region_code": "360200",
+      "center_geo": "117.184892,29.2744"
+    },
+    {
+      "code": "101281100",
+      "name": "江门",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "0750",
+      "region_code": "440700",
+      "center_geo": "113.081548,22.578948"
+    },
+    {
+      "code": "101281900",
+      "name": "揭阳",
+      "first_char": "J",
+      "hot": false,
+      "area_code": "0663",
+      "region_code": "445200",
+      "center_geo": "116.372732,23.550968"
+    },
+    {
+      "code": "101130200",
+      "name": "克拉玛依",
+      "first_char": "K",
+      "hot": false,
+      "area_code": "0990",
+      "region_code": "650200",
+      "center_geo": "84.889239,45.577712"
+    },
+    {
+      "code": "101131100",
+      "name": "克孜勒苏柯尔克孜自治州",
+      "first_char": "K",
+      "hot": false,
+      "area_code": "0908",
+      "region_code": "653000",
+      "center_geo": "76.168157,39.716236"
+    },
+    {
+      "code": "101131200",
+      "name": "喀什地区",
+      "first_char": "K",
+      "hot": false,
+      "area_code": "0998",
+      "region_code": "653100",
+      "center_geo": "75.990618,39.470215"
+    },
+    {
+      "code": "101132200",
+      "name": "可克达拉市",
+      "first_char": "K",
+      "hot": false,
+      "area_code": "1999",
+      "region_code": "659008",
+      "center_geo": "80.994153,43.940381"
+    },
+    {
+      "code": "101132300",
+      "name": "昆玉市",
+      "first_char": "K",
+      "hot": false,
+      "area_code": "1903",
+      "region_code": "659009",
+      "center_geo": "79.270193,37.215372"
+    },
+    {
+      "code": "101180800",
+      "name": "开封",
+      "first_char": "K",
+      "hot": false,
+      "area_code": "0378",
+      "region_code": "410200",
+      "center_geo": "114.314278,34.798083"
+    },
+    {
+      "code": "101290100",
+      "name": "昆明",
+      "first_char": "K",
+      "hot": false,
+      "area_code": "0871",
+      "region_code": "530100",
+      "center_geo": "102.833669,24.88149"
+    },
+    {
+      "code": "101060600",
+      "name": "辽源",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0437",
+      "region_code": "220400",
+      "center_geo": "125.144676,42.887961"
+    },
+    {
+      "code": "101071000",
+      "name": "辽阳",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0419",
+      "region_code": "211000",
+      "center_geo": "123.239669,41.267396"
+    },
+    {
+      "code": "101090600",
+      "name": "廊坊",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0316",
+      "region_code": "131000",
+      "center_geo": "116.683546,39.538304"
+    },
+    {
+      "code": "101100700",
+      "name": "临汾",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0357",
+      "region_code": "141000",
+      "center_geo": "111.51931,36.088581"
+    },
+    {
+      "code": "101101100",
+      "name": "吕梁",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0358",
+      "region_code": "141100",
+      "center_geo": "111.14454,37.518996"
+    },
+    {
+      "code": "101120900",
+      "name": "临沂",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0539",
+      "region_code": "371300",
+      "center_geo": "118.356464,35.103771"
+    },
+    {
+      "code": "101121700",
+      "name": "聊城",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0635",
+      "region_code": "371500",
+      "center_geo": "115.985238,36.455857"
+    },
+    {
+      "code": "101140100",
+      "name": "拉萨",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0891",
+      "region_code": "540100",
+      "center_geo": "91.171924,29.653491"
+    },
+    {
+      "code": "101140400",
+      "name": "林芝",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0894",
+      "region_code": "540400",
+      "center_geo": "94.361436,29.64875"
+    },
+    {
+      "code": "101160100",
+      "name": "兰州",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0931",
+      "region_code": "620100",
+      "center_geo": "103.834228,36.060798"
+    },
+    {
+      "code": "101161100",
+      "name": "陇南",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "2935",
+      "region_code": "621200",
+      "center_geo": "104.960296,33.370174"
+    },
+    {
+      "code": "101161300",
+      "name": "临夏回族自治州",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0930",
+      "region_code": "622900",
+      "center_geo": "103.210386,35.601792"
+    },
+    {
+      "code": "101180900",
+      "name": "洛阳",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0379",
+      "region_code": "410300",
+      "center_geo": "112.453895,34.619702"
+    },
+    {
+      "code": "101181500",
+      "name": "漯河",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0395",
+      "region_code": "411100",
+      "center_geo": "114.0166,33.58038"
+    },
+    {
+      "code": "101191000",
+      "name": "连云港",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0518",
+      "region_code": "320700",
+      "center_geo": "119.221487,34.596639"
+    },
+    {
+      "code": "101210800",
+      "name": "丽水",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0578",
+      "region_code": "331100",
+      "center_geo": "119.923249,28.467694"
+    },
+    {
+      "code": "101221400",
+      "name": "六安",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0564",
+      "region_code": "341500",
+      "center_geo": "116.519729,31.735892"
+    },
+    {
+      "code": "101230700",
+      "name": "龙岩",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0597",
+      "region_code": "350800",
+      "center_geo": "117.017362,25.075884"
+    },
+    {
+      "code": "101250800",
+      "name": "娄底",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0738",
+      "region_code": "431300",
+      "center_geo": "111.994468,27.699838"
+    },
+    {
+      "code": "101260600",
+      "name": "六盘水",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0858",
+      "region_code": "520200",
+      "center_geo": "104.830357,26.592538"
+    },
+    {
+      "code": "101271000",
+      "name": "泸州",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0830",
+      "region_code": "510500",
+      "center_geo": "105.441866,28.87098"
+    },
+    {
+      "code": "101271400",
+      "name": "乐山",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0833",
+      "region_code": "511100",
+      "center_geo": "103.766085,29.552275"
+    },
+    {
+      "code": "101272000",
+      "name": "凉山彝族自治州",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0834",
+      "region_code": "513400",
+      "center_geo": "102.267713,27.881396"
+    },
+    {
+      "code": "101290800",
+      "name": "临沧",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0883",
+      "region_code": "530900",
+      "center_geo": "100.088837,23.884175"
+    },
+    {
+      "code": "101290900",
+      "name": "丽江",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0888",
+      "region_code": "530700",
+      "center_geo": "100.225936,26.855165"
+    },
+    {
+      "code": "101300300",
+      "name": "柳州",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "0772",
+      "region_code": "450200",
+      "center_geo": "109.428071,24.326442"
+    },
+    {
+      "code": "101300400",
+      "name": "来宾",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "1772",
+      "region_code": "451300",
+      "center_geo": "109.221243,23.750105"
+    },
+    {
+      "code": "101311300",
+      "name": "临高",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "1896",
+      "region_code": "469024",
+      "center_geo": "109.690508,19.912025"
+    },
+    {
+      "code": "101311600",
+      "name": "乐东黎族自治县",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "2802",
+      "region_code": "469027",
+      "center_geo": "109.173384,18.750063"
+    },
+    {
+      "code": "101311700",
+      "name": "陵水黎族自治县",
+      "first_char": "L",
+      "hot": false,
+      "area_code": "809",
+      "region_code": "469028",
+      "center_geo": "110.037553,18.506045"
+    },
+    {
+      "code": "101050300",
+      "name": "牡丹江",
+      "first_char": "M",
+      "hot": false,
+      "area_code": "0453",
+      "region_code": "231000",
+      "center_geo": "129.632928,44.551486"
+    },
+    {
+      "code": "101220500",
+      "name": "马鞍山",
+      "first_char": "M",
+      "hot": false,
+      "area_code": "0555",
+      "region_code": "340500",
+      "center_geo": "118.50685,31.668765"
+    },
+    {
+      "code": "101270400",
+      "name": "绵阳",
+      "first_char": "M",
+      "hot": false,
+      "area_code": "0816",
+      "region_code": "510700",
+      "center_geo": "104.679127,31.467673"
+    },
+    {
+      "code": "101271500",
+      "name": "眉山",
+      "first_char": "M",
+      "hot": false,
+      "area_code": "1833",
+      "region_code": "511400",
+      "center_geo": "103.848417,30.077113"
+    },
+    {
+      "code": "101280400",
+      "name": "梅州",
+      "first_char": "M",
+      "hot": false,
+      "area_code": "0753",
+      "region_code": "441400",
+      "center_geo": "116.122046,24.288832"
+    },
+    {
+      "code": "101282000",
+      "name": "茂名",
+      "first_char": "M",
+      "hot": false,
+      "area_code": "0668",
+      "region_code": "440900",
+      "center_geo": "110.925533,21.662728"
+    },
+    {
+      "code": "101140600",
+      "name": "那曲",
+      "first_char": "N",
+      "hot": false,
+      "area_code": "0896",
+      "region_code": "540600",
+      "center_geo": "92.05151,31.477905"
+    },
+    {
+      "code": "101180700",
+      "name": "南阳",
+      "first_char": "N",
+      "hot": false,
+      "area_code": "0377",
+      "region_code": "411300",
+      "center_geo": "112.584753,33.016102"
+    },
+    {
+      "code": "101190100",
+      "name": "南京",
+      "first_char": "N",
+      "hot": false,
+      "area_code": "025",
+      "region_code": "320100",
+      "center_geo": "118.796624,32.059344"
+    },
+    {
+      "code": "101190500",
+      "name": "南通",
+      "first_char": "N",
+      "hot": false,
+      "area_code": "0513",
+      "region_code": "320600",
+      "center_geo": "120.894522,31.981269"
+    },
+    {
+      "code": "101210400",
+      "name": "宁波",
+      "first_char": "N",
+      "hot": false,
+      "area_code": "0574",
+      "region_code": "330200",
+      "center_geo": "121.62454,29.860258"
+    },
+    {
+      "code": "101230300",
+      "name": "宁德",
+      "first_char": "N",
+      "hot": false,
+      "area_code": "0593",
+      "region_code": "350900",
+      "center_geo": "119.547729,26.666222"
+    },
+    {
+      "code": "101230900",
+      "name": "南平",
+      "first_char": "N",
+      "hot": false,
+      "area_code": "0599",
+      "region_code": "350700",
+      "center_geo": "118.081325,27.382829"
+    },
+    {
+      "code": "101240100",
+      "name": "南昌",
+      "first_char": "N",
+      "hot": false,
+      "area_code": "0791",
+      "region_code": "360100",
+      "center_geo": "115.857972,28.682976"
+    },
+    {
+      "code": "101270500",
+      "name": "南充",
+      "first_char": "N",
+      "hot": false,
+      "area_code": "0817",
+      "region_code": "511300",
+      "center_geo": "106.110565,30.837235"
+    },
+    {
+      "code": "101271200",
+      "name": "内江",
+      "first_char": "N",
+      "hot": false,
+      "area_code": "1832",
+      "region_code": "511000",
+      "center_geo": "105.057992,29.58021"
+    },
+    {
+      "code": "101291400",
+      "name": "怒江傈僳族自治州",
+      "first_char": "N",
+      "hot": false,
+      "area_code": "0886",
+      "region_code": "533300",
+      "center_geo": "98.8566,25.817555"
+    },
+    {
+      "code": "101300100",
+      "name": "南宁",
+      "first_char": "N",
+      "hot": false,
+      "area_code": "0771",
+      "region_code": "450100",
+      "center_geo": "108.366407,22.8177"
+    },
+    {
+      "code": "101071300",
+      "name": "盘锦",
+      "first_char": "P",
+      "hot": false,
+      "area_code": "0427",
+      "region_code": "211100",
+      "center_geo": "122.170729,40.71956"
+    },
+    {
+      "code": "101160300",
+      "name": "平凉",
+      "first_char": "P",
+      "hot": false,
+      "area_code": "0933",
+      "region_code": "620800",
+      "center_geo": "106.664913,35.542417"
+    },
+    {
+      "code": "101180500",
+      "name": "平顶山",
+      "first_char": "P",
+      "hot": false,
+      "area_code": "0375",
+      "region_code": "410400",
+      "center_geo": "113.192595,33.766554"
+    },
+    {
+      "code": "101181300",
+      "name": "濮阳",
+      "first_char": "P",
+      "hot": false,
+      "area_code": "0393",
+      "region_code": "410900",
+      "center_geo": "115.029246,35.762731"
+    },
+    {
+      "code": "101230400",
+      "name": "莆田",
+      "first_char": "P",
+      "hot": false,
+      "area_code": "0594",
+      "region_code": "350300",
+      "center_geo": "119.007662,25.454202"
+    },
+    {
+      "code": "101240900",
+      "name": "萍乡",
+      "first_char": "P",
+      "hot": false,
+      "area_code": "0799",
+      "region_code": "360300",
+      "center_geo": "113.887147,27.658721"
+    },
+    {
+      "code": "101270200",
+      "name": "攀枝花",
+      "first_char": "P",
+      "hot": false,
+      "area_code": "0812",
+      "region_code": "510400",
+      "center_geo": "101.729116,26.558645"
+    },
+    {
+      "code": "101290500",
+      "name": "普洱",
+      "first_char": "P",
+      "hot": false,
+      "area_code": "0879",
+      "region_code": "530800",
+      "center_geo": "100.966011,22.825229"
+    },
+    {
+      "code": "101050200",
+      "name": "齐齐哈尔",
+      "first_char": "Q",
+      "hot": false,
+      "area_code": "0452",
+      "region_code": "230200",
+      "center_geo": "123.918193,47.354892"
+    },
+    {
+      "code": "101050900",
+      "name": "七台河",
+      "first_char": "Q",
+      "hot": false,
+      "area_code": "0464",
+      "region_code": "230900",
+      "center_geo": "131.003015,45.771178"
+    },
+    {
+      "code": "101091100",
+      "name": "秦皇岛",
+      "first_char": "Q",
+      "hot": false,
+      "area_code": "0335",
+      "region_code": "130300",
+      "center_geo": "119.52022,39.888243"
+    },
+    {
+      "code": "101120200",
+      "name": "青岛",
+      "first_char": "Q",
+      "hot": false,
+      "area_code": "0532",
+      "region_code": "370200",
+      "center_geo": "120.382665,36.066938"
+    },
+    {
+      "code": "101160400",
+      "name": "庆阳",
+      "first_char": "Q",
+      "hot": false,
+      "area_code": "0934",
+      "region_code": "621000",
+      "center_geo": "107.643433,35.709459"
+    },
+    {
+      "code": "101201500",
+      "name": "潜江",
+      "first_char": "Q",
+      "hot": false,
+      "area_code": "2728",
+      "region_code": "429005",
+      "center_geo": "112.900279,30.401954"
+    },
+    {
+      "code": "101211000",
+      "name": "衢州",
+      "first_char": "Q",
+      "hot": false,
+      "area_code": "0570",
+      "region_code": "330800",
+      "center_geo": "118.859307,28.970229"
+    },
+    {
+      "code": "101230500",
+      "name": "泉州",
+      "first_char": "Q",
+      "hot": false,
+      "area_code": "0595",
+      "region_code": "350500",
+      "center_geo": "118.675724,24.874452"
+    },
+    {
+      "code": "101260700",
+      "name": "黔东南苗族侗族自治州",
+      "first_char": "Q",
+      "hot": false,
+      "area_code": "0855",
+      "region_code": "522600",
+      "center_geo": "107.982838,26.583759"
+    },
+    {
+      "code": "101260800",
+      "name": "黔南布依族苗族自治州",
+      "first_char": "Q",
+      "hot": false,
+      "area_code": "0854",
+      "region_code": "522700",
+      "center_geo": "107.522303,26.253136"
+    },
+    {
+      "code": "101260900",
+      "name": "黔西南布依族苗族自治州",
+      "first_char": "Q",
+      "hot": false,
+      "area_code": "0859",
+      "region_code": "522300",
+      "center_geo": "104.906419,25.087733"
+    },
+    {
+      "code": "101281300",
+      "name": "清远",
+      "first_char": "Q",
+      "hot": false,
+      "area_code": "0763",
+      "region_code": "441800",
+      "center_geo": "113.056098,23.682064"
+    },
+    {
+      "code": "101290200",
+      "name": "曲靖",
+      "first_char": "Q",
+      "hot": false,
+      "area_code": "0874",
+      "region_code": "530300",
+      "center_geo": "103.796288,25.490866"
+    },
+    {
+      "code": "101301100",
+      "name": "钦州",
+      "first_char": "Q",
+      "hot": false,
+      "area_code": "0777",
+      "region_code": "450700",
+      "center_geo": "108.654355,21.980894"
+    },
+    {
+      "code": "101310600",
+      "name": "琼海",
+      "first_char": "Q",
+      "hot": false,
+      "area_code": "1894",
+      "region_code": "469002",
+      "center_geo": "110.474524,19.259112"
+    },
+    {
+      "code": "101311900",
+      "name": "琼中黎族苗族自治县",
+      "first_char": "Q",
+      "hot": false,
+      "area_code": "1899",
+      "region_code": "469030",
+      "center_geo": "109.838423,19.03327"
+    },
+    {
+      "code": "101121500",
+      "name": "日照",
+      "first_char": "R",
+      "hot": false,
+      "area_code": "0633",
+      "region_code": "371100",
+      "center_geo": "119.52685,35.416912"
+    },
+    {
+      "code": "101140200",
+      "name": "日喀则",
+      "first_char": "R",
+      "hot": false,
+      "area_code": "0892",
+      "region_code": "540200",
+      "center_geo": "88.880423,29.266838"
+    },
+    {
+      "code": "101020100",
+      "name": "上海",
+      "first_char": "S",
+      "hot": true,
+      "area_code": "021",
+      "region_code": "310000",
+      "center_geo": "121.473667,31.230525"
+    },
+    {
+      "code": "101050500",
+      "name": "绥化",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0455",
+      "region_code": "231200",
+      "center_geo": "126.968714,46.654147"
+    },
+    {
+      "code": "101051200",
+      "name": "双鸭山",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0469",
+      "region_code": "230500",
+      "center_geo": "131.141563,46.676157"
+    },
+    {
+      "code": "101060300",
+      "name": "四平",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0434",
+      "region_code": "220300",
+      "center_geo": "124.350599,43.166764"
+    },
+    {
+      "code": "101060700",
+      "name": "松原",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0438",
+      "region_code": "220700",
+      "center_geo": "124.825321,45.14191"
+    },
+    {
+      "code": "101070100",
+      "name": "沈阳",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "024",
+      "region_code": "210100",
+      "center_geo": "123.464675,41.677576"
+    },
+    {
+      "code": "101090100",
+      "name": "石家庄",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0311",
+      "region_code": "130100",
+      "center_geo": "114.514976,38.042007"
+    },
+    {
+      "code": "101100900",
+      "name": "朔州",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0349",
+      "region_code": "140600",
+      "center_geo": "112.432906,39.331734"
+    },
+    {
+      "code": "101110600",
+      "name": "商洛",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0914",
+      "region_code": "611000",
+      "center_geo": "109.918646,33.873358"
+    },
+    {
+      "code": "101131600",
+      "name": "石河子",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0993",
+      "region_code": "659001",
+      "center_geo": "86.080397,44.305368"
+    },
+    {
+      "code": "101132400",
+      "name": "双河市",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "1909",
+      "region_code": "659007",
+      "center_geo": "82.36895,44.846859"
+    },
+    {
+      "code": "101140500",
+      "name": "山南",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0893",
+      "region_code": "540500",
+      "center_geo": "91.771426,29.237722"
+    },
+    {
+      "code": "101170200",
+      "name": "石嘴山",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0952",
+      "region_code": "640200",
+      "center_geo": "106.382792,38.984632"
+    },
+    {
+      "code": "101181000",
+      "name": "商丘",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0370",
+      "region_code": "411400",
+      "center_geo": "115.656358,34.415165"
+    },
+    {
+      "code": "101181700",
+      "name": "三门峡",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0398",
+      "region_code": "411200",
+      "center_geo": "111.200482,34.773196"
+    },
+    {
+      "code": "101190400",
+      "name": "苏州",
+      "first_char": "S",
+      "hot": true,
+      "area_code": "0512",
+      "region_code": "320500",
+      "center_geo": "120.585294,31.299758"
+    },
+    {
+      "code": "101191300",
+      "name": "宿迁",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0527",
+      "region_code": "321300",
+      "center_geo": "118.275228,33.963186"
+    },
+    {
+      "code": "101201000",
+      "name": "十堰",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0719",
+      "region_code": "420300",
+      "center_geo": "110.798921,32.629057"
+    },
+    {
+      "code": "101201100",
+      "name": "随州",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0722",
+      "region_code": "421300",
+      "center_geo": "113.382324,31.690275"
+    },
+    {
+      "code": "101201700",
+      "name": "神农架",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "1719",
+      "region_code": "429021",
+      "center_geo": "110.675879,31.745103"
+    },
+    {
+      "code": "101210500",
+      "name": "绍兴",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0575",
+      "region_code": "330600",
+      "center_geo": "120.582886,30.051549"
+    },
+    {
+      "code": "101220700",
+      "name": "宿州",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0557",
+      "region_code": "341300",
+      "center_geo": "116.96419,33.647726"
+    },
+    {
+      "code": "101230800",
+      "name": "三明",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0598",
+      "region_code": "350400",
+      "center_geo": "117.638919,26.263455"
+    },
+    {
+      "code": "101240300",
+      "name": "上饶",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0793",
+      "region_code": "361100",
+      "center_geo": "117.943064,28.45513"
+    },
+    {
+      "code": "101250900",
+      "name": "邵阳",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0739",
+      "region_code": "430500",
+      "center_geo": "111.467855,27.239528"
+    },
+    {
+      "code": "101270700",
+      "name": "遂宁",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0825",
+      "region_code": "510900",
+      "center_geo": "105.592602,30.53268"
+    },
+    {
+      "code": "101280200",
+      "name": "韶关",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0751",
+      "region_code": "440200",
+      "center_geo": "113.597324,24.810977"
+    },
+    {
+      "code": "101280500",
+      "name": "汕头",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0754",
+      "region_code": "440500",
+      "center_geo": "116.681956,23.354152"
+    },
+    {
+      "code": "101280600",
+      "name": "深圳",
+      "first_char": "S",
+      "hot": true,
+      "area_code": "0755",
+      "region_code": "440300",
+      "center_geo": "114.057939,22.543527"
+    },
+    {
+      "code": "101282100",
+      "name": "汕尾",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0660",
+      "region_code": "441500",
+      "center_geo": "115.375557,22.787204"
+    },
+    {
+      "code": "101310200",
+      "name": "三亚",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0899",
+      "region_code": "460200",
+      "center_geo": "109.511709,18.252865"
+    },
+    {
+      "code": "101310300",
+      "name": "三沙",
+      "first_char": "S",
+      "hot": false,
+      "area_code": "0898x",
+      "region_code": "460300",
+      "center_geo": "112.338649,16.831004"
+    },
+    {
+      "code": "101030100",
+      "name": "天津",
+      "first_char": "T",
+      "hot": true,
+      "area_code": "022",
+      "region_code": "120000",
+      "center_geo": "117.201509,39.085318"
+    },
+    {
+      "code": "101060400",
+      "name": "通化",
+      "first_char": "T",
+      "hot": false,
+      "area_code": "0435",
+      "region_code": "220500",
+      "center_geo": "125.939721,41.728312"
+    },
+    {
+      "code": "101071100",
+      "name": "铁岭",
+      "first_char": "T",
+      "hot": false,
+      "area_code": "0410",
+      "region_code": "211200",
+      "center_geo": "123.726008,42.223709"
+    },
+    {
+      "code": "101080400",
+      "name": "通辽",
+      "first_char": "T",
+      "hot": false,
+      "area_code": "0475",
+      "region_code": "150500",
+      "center_geo": "122.243309,43.653566"
+    },
+    {
+      "code": "101090500",
+      "name": "唐山",
+      "first_char": "T",
+      "hot": false,
+      "area_code": "0315",
+      "region_code": "130200",
+      "center_geo": "118.180149,39.63068"
+    },
+    {
+      "code": "101100100",
+      "name": "太原",
+      "first_char": "T",
+      "hot": false,
+      "area_code": "0351",
+      "region_code": "140100",
+      "center_geo": "112.549656,37.870451"
+    },
+    {
+      "code": "101111000",
+      "name": "铜川",
+      "first_char": "T",
+      "hot": false,
+      "area_code": "0919",
+      "region_code": "610200",
+      "center_geo": "108.945116,34.897133"
+    },
+    {
+      "code": "101120800",
+      "name": "泰安",
+      "first_char": "T",
+      "hot": false,
+      "area_code": "0538",
+      "region_code": "370900",
+      "center_geo": "117.086963,36.201784"
+    },
+    {
+      "code": "101130800",
+      "name": "吐鲁番",
+      "first_char": "T",
+      "hot": false,
+      "area_code": "0995",
+      "region_code": "650400",
+      "center_geo": "89.250261,42.972736"
+    },
+    {
+      "code": "101131400",
+      "name": "塔城地区",
+      "first_char": "T",
+      "hot": false,
+      "area_code": "0901",
+      "region_code": "654200",
+      "center_geo": "82.980316,46.745364"
+    },
+    {
+      "code": "101131800",
+      "name": "图木舒克",
+      "first_char": "T",
+      "hot": false,
+      "area_code": "1998",
+      "region_code": "659003",
+      "center_geo": "79.074965,39.867776"
+    },
+    {
+      "code": "101132000",
+      "name": "铁门关",
+      "first_char": "T",
+      "hot": false,
+      "area_code": "2000",
+      "region_code": "659006",
+      "center_geo": "85.670291,41.862997"
+    },
+    {
+      "code": "101160900",
+      "name": "天水",
+      "first_char": "T",
+      "hot": false,
+      "area_code": "0938",
+      "region_code": "620500",
+      "center_geo": "105.751967,34.574507"
+    },
+    {
+      "code": "101191200",
+      "name": "泰州",
+      "first_char": "T",
+      "hot": false,
+      "area_code": "0523",
+      "region_code": "321200",
+      "center_geo": "119.922883,32.456692"
+    },
+    {
+      "code": "101201600",
+      "name": "天门",
+      "first_char": "T",
+      "hot": false,
+      "area_code": "1728",
+      "region_code": "429006",
+      "center_geo": "113.166545,30.663706"
+    },
+    {
+      "code": "101210600",
+      "name": "台州",
+      "first_char": "T",
+      "hot": false,
+      "area_code": "0576",
+      "region_code": "331000",
+      "center_geo": "121.42079,28.655716"
+    },
+    {
+      "code": "101221200",
+      "name": "铜陵",
+      "first_char": "T",
+      "hot": false,
+      "area_code": "0562",
+      "region_code": "340700",
+      "center_geo": "117.811298,30.945214"
+    },
+    {
+      "code": "101260400",
+      "name": "铜仁",
+      "first_char": "T",
+      "hot": false,
+      "area_code": "0856",
+      "region_code": "520600",
+      "center_geo": "109.189528,27.731555"
+    },
+    {
+      "code": "101311100",
+      "name": "屯昌",
+      "first_char": "T",
+      "hot": false,
+      "area_code": "1892",
+      "region_code": "469022",
+      "center_geo": "110.101667,19.351662"
+    },
+    {
+      "code": "101341100",
+      "name": "台湾",
+      "first_char": "T",
+      "hot": false,
+      "area_code": "",
+      "region_code": "710000",
+      "center_geo": "121.509062,25.044332"
+    },
+    {
+      "code": "101080300",
+      "name": "乌海",
+      "first_char": "W",
+      "hot": false,
+      "area_code": "0473",
+      "region_code": "150300",
+      "center_geo": "106.79415,39.655048"
+    },
+    {
+      "code": "101080900",
+      "name": "乌兰察布",
+      "first_char": "W",
+      "hot": false,
+      "area_code": "0474",
+      "region_code": "150900",
+      "center_geo": "113.132227,40.994526"
+    },
+    {
+      "code": "101110500",
+      "name": "渭南",
+      "first_char": "W",
+      "hot": false,
+      "area_code": "0913",
+      "region_code": "610500",
+      "center_geo": "109.470962,34.520632"
+    },
+    {
+      "code": "101120600",
+      "name": "潍坊",
+      "first_char": "W",
+      "hot": false,
+      "area_code": "0536",
+      "region_code": "370700",
+      "center_geo": "119.161721,36.707668"
+    },
+    {
+      "code": "101121300",
+      "name": "威海",
+      "first_char": "W",
+      "hot": false,
+      "area_code": "0631",
+      "region_code": "371000",
+      "center_geo": "122.120519,37.513315"
+    },
+    {
+      "code": "101130100",
+      "name": "乌鲁木齐",
+      "first_char": "W",
+      "hot": false,
+      "area_code": "0991",
+      "region_code": "650100",
+      "center_geo": "87.616824,43.825377"
+    },
+    {
+      "code": "101131900",
+      "name": "五家渠",
+      "first_char": "W",
+      "hot": false,
+      "area_code": "1994",
+      "region_code": "659004",
+      "center_geo": "87.542852,44.166489"
+    },
+    {
+      "code": "101160500",
+      "name": "武威",
+      "first_char": "W",
+      "hot": false,
+      "area_code": "1935",
+      "region_code": "620600",
+      "center_geo": "102.637821,37.92898"
+    },
+    {
+      "code": "101170300",
+      "name": "吴忠",
+      "first_char": "W",
+      "hot": false,
+      "area_code": "0953",
+      "region_code": "640300",
+      "center_geo": "106.198613,37.997755"
+    },
+    {
+      "code": "101190200",
+      "name": "无锡",
+      "first_char": "W",
+      "hot": false,
+      "area_code": "0510",
+      "region_code": "320200",
+      "center_geo": "120.311889,31.491064"
+    },
+    {
+      "code": "101200100",
+      "name": "武汉",
+      "first_char": "W",
+      "hot": true,
+      "area_code": "027",
+      "region_code": "420100",
+      "center_geo": "114.304569,30.593354"
+    },
+    {
+      "code": "101210700",
+      "name": "温州",
+      "first_char": "W",
+      "hot": false,
+      "area_code": "0577",
+      "region_code": "330300",
+      "center_geo": "120.699279,27.993849"
+    },
+    {
+      "code": "101220300",
+      "name": "芜湖",
+      "first_char": "W",
+      "hot": false,
+      "area_code": "0553",
+      "region_code": "340200",
+      "center_geo": "118.433065,31.352614"
+    },
+    {
+      "code": "101291100",
+      "name": "文山壮族苗族自治州",
+      "first_char": "W",
+      "hot": false,
+      "area_code": "0876",
+      "region_code": "532600",
+      "center_geo": "104.21567,23.400983"
+    },
+    {
+      "code": "101300600",
+      "name": "梧州",
+      "first_char": "W",
+      "hot": false,
+      "area_code": "0774",
+      "region_code": "450400",
+      "center_geo": "111.279022,23.476733"
+    },
+    {
+      "code": "101310500",
+      "name": "五指山",
+      "first_char": "W",
+      "hot": false,
+      "area_code": "1897",
+      "region_code": "469001",
+      "center_geo": "109.516784,18.774827"
+    },
+    {
+      "code": "101310700",
+      "name": "文昌",
+      "first_char": "W",
+      "hot": false,
+      "area_code": "1893",
+      "region_code": "469005",
+      "center_geo": "110.797473,19.544234"
+    },
+    {
+      "code": "101310800",
+      "name": "万宁",
+      "first_char": "W",
+      "hot": false,
+      "area_code": "1898",
+      "region_code": "469006",
+      "center_geo": "110.392605,18.793697"
+    },
+    {
+      "code": "101081000",
+      "name": "锡林郭勒盟",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "0479",
+      "region_code": "152500",
+      "center_geo": "116.047387,43.933212"
+    },
+    {
+      "code": "101081100",
+      "name": "兴安盟",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "0482",
+      "region_code": "152200",
+      "center_geo": "122.037796,46.082373"
+    },
+    {
+      "code": "101090900",
+      "name": "邢台",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "0319",
+      "region_code": "130500",
+      "center_geo": "114.49742,37.060227"
+    },
+    {
+      "code": "101101000",
+      "name": "忻州",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "0350",
+      "region_code": "140900",
+      "center_geo": "112.734149,38.415958"
+    },
+    {
+      "code": "101110100",
+      "name": "西安",
+      "first_char": "X",
+      "hot": true,
+      "area_code": "029",
+      "region_code": "610100",
+      "center_geo": "108.939645,34.343207"
+    },
+    {
+      "code": "101110200",
+      "name": "咸阳",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "0910",
+      "region_code": "610400",
+      "center_geo": "108.708837,34.329896"
+    },
+    {
+      "code": "101132500",
+      "name": "新星市",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "101132500",
+      "region_code": "659011",
+      "center_geo": "93.74831,42.797043"
+    },
+    {
+      "code": "101150100",
+      "name": "西宁",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "0971",
+      "region_code": "630100",
+      "center_geo": "101.758249,36.676027"
+    },
+    {
+      "code": "101180300",
+      "name": "新乡",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "0373",
+      "region_code": "410700",
+      "center_geo": "113.92679,35.303589"
+    },
+    {
+      "code": "101180400",
+      "name": "许昌",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "0374",
+      "region_code": "411000",
+      "center_geo": "113.852004,34.03732"
+    },
+    {
+      "code": "101180600",
+      "name": "信阳",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "0376",
+      "region_code": "411500",
+      "center_geo": "114.091058,32.148624"
+    },
+    {
+      "code": "101190800",
+      "name": "徐州",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "0516",
+      "region_code": "320300",
+      "center_geo": "117.283752,34.204224"
+    },
+    {
+      "code": "101200200",
+      "name": "襄阳",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "0710",
+      "region_code": "420600",
+      "center_geo": "112.121743,32.010161"
+    },
+    {
+      "code": "101200400",
+      "name": "孝感",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "0712",
+      "region_code": "420900",
+      "center_geo": "113.956962,30.918311"
+    },
+    {
+      "code": "101200700",
+      "name": "咸宁",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "0715",
+      "region_code": "421200",
+      "center_geo": "114.322601,29.84135"
+    },
+    {
+      "code": "101201400",
+      "name": "仙桃",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "0728",
+      "region_code": "429004",
+      "center_geo": "113.442973,30.328407"
+    },
+    {
+      "code": "101221300",
+      "name": "宣城",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "0563",
+      "region_code": "341800",
+      "center_geo": "118.759127,30.939278"
+    },
+    {
+      "code": "101230200",
+      "name": "厦门",
+      "first_char": "X",
+      "hot": true,
+      "area_code": "0592",
+      "region_code": "350200",
+      "center_geo": "118.08891,24.479627"
+    },
+    {
+      "code": "101241000",
+      "name": "新余",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "0790",
+      "region_code": "360500",
+      "center_geo": "114.916665,27.818553"
+    },
+    {
+      "code": "101250200",
+      "name": "湘潭",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "0732",
+      "region_code": "430300",
+      "center_geo": "112.945439,27.83136"
+    },
+    {
+      "code": "101251400",
+      "name": "湘西土家族苗族自治州",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "0743",
+      "region_code": "433100",
+      "center_geo": "109.673345,28.215983"
+    },
+    {
+      "code": "101291000",
+      "name": "西双版纳傣族自治州",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "0691",
+      "region_code": "532800",
+      "center_geo": "100.797002,22.009037"
+    },
+    {
+      "code": "101320300",
+      "name": "香港",
+      "first_char": "X",
+      "hot": false,
+      "area_code": "1852",
+      "region_code": "810000",
+      "center_geo": "114.170714,22.278354"
+    },
+    {
+      "code": "101050700",
+      "name": "伊春",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0458",
+      "region_code": "230700",
+      "center_geo": "128.840863,47.728332"
+    },
+    {
+      "code": "101060900",
+      "name": "延边朝鲜族自治州",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "1433",
+      "region_code": "222400",
+      "center_geo": "129.470605,42.909426"
+    },
+    {
+      "code": "101070800",
+      "name": "营口",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0417",
+      "region_code": "210800",
+      "center_geo": "122.219148,40.625027"
+    },
+    {
+      "code": "101100300",
+      "name": "阳泉",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0353",
+      "region_code": "140300",
+      "center_geo": "113.580426,37.857094"
+    },
+    {
+      "code": "101100800",
+      "name": "运城",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0359",
+      "region_code": "140800",
+      "center_geo": "111.007051,35.02667"
+    },
+    {
+      "code": "101110300",
+      "name": "延安",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0911",
+      "region_code": "610600",
+      "center_geo": "109.49468,36.650109"
+    },
+    {
+      "code": "101110400",
+      "name": "榆林",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0912",
+      "region_code": "610800",
+      "center_geo": "109.734104,38.28576"
+    },
+    {
+      "code": "101120500",
+      "name": "烟台",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0535",
+      "region_code": "370600",
+      "center_geo": "121.447755,37.464551"
+    },
+    {
+      "code": "101130600",
+      "name": "伊犁哈萨克自治州",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0999",
+      "region_code": "654000",
+      "center_geo": "81.323691,43.917106"
+    },
+    {
+      "code": "101150700",
+      "name": "玉树藏族自治州",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0976",
+      "region_code": "632700",
+      "center_geo": "97.006292,33.006308"
+    },
+    {
+      "code": "101170100",
+      "name": "银川",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0951",
+      "region_code": "640100",
+      "center_geo": "106.230977,38.487783"
+    },
+    {
+      "code": "101190600",
+      "name": "扬州",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0514",
+      "region_code": "321000",
+      "center_geo": "119.412834,32.394404"
+    },
+    {
+      "code": "101190700",
+      "name": "盐城",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0515",
+      "region_code": "320900",
+      "center_geo": "120.16263,33.348176"
+    },
+    {
+      "code": "101200900",
+      "name": "宜昌",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0717",
+      "region_code": "420500",
+      "center_geo": "111.286962,30.69217"
+    },
+    {
+      "code": "101240500",
+      "name": "宜春",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0795",
+      "region_code": "360900",
+      "center_geo": "114.416826,27.816245"
+    },
+    {
+      "code": "101241100",
+      "name": "鹰潭",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0701",
+      "region_code": "360600",
+      "center_geo": "117.039532,28.272092"
+    },
+    {
+      "code": "101250700",
+      "name": "益阳",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0737",
+      "region_code": "430900",
+      "center_geo": "112.355994,28.554853"
+    },
+    {
+      "code": "101251000",
+      "name": "岳阳",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0730",
+      "region_code": "430600",
+      "center_geo": "113.128922,29.35648"
+    },
+    {
+      "code": "101251300",
+      "name": "永州",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0746",
+      "region_code": "431100",
+      "center_geo": "111.613482,26.419861"
+    },
+    {
+      "code": "101271100",
+      "name": "宜宾",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0831",
+      "region_code": "511500",
+      "center_geo": "104.642826,28.752354"
+    },
+    {
+      "code": "101271600",
+      "name": "雅安",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0835",
+      "region_code": "511800",
+      "center_geo": "103.041538,30.009998"
+    },
+    {
+      "code": "101281400",
+      "name": "云浮",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0766",
+      "region_code": "445300",
+      "center_geo": "112.044524,22.915163"
+    },
+    {
+      "code": "101281800",
+      "name": "阳江",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0662",
+      "region_code": "441700",
+      "center_geo": "111.98343,21.856853"
+    },
+    {
+      "code": "101290400",
+      "name": "玉溪",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0877",
+      "region_code": "530400",
+      "center_geo": "102.526673,24.346786"
+    },
+    {
+      "code": "101300900",
+      "name": "玉林",
+      "first_char": "Y",
+      "hot": false,
+      "area_code": "0775",
+      "region_code": "450900",
+      "center_geo": "110.18097,22.654001"
+    },
+    {
+      "code": "101090300",
+      "name": "张家口",
+      "first_char": "Z",
+      "hot": false,
+      "area_code": "0313",
+      "region_code": "130700",
+      "center_geo": "114.885895,40.768931"
+    },
+    {
+      "code": "101120300",
+      "name": "淄博",
+      "first_char": "Z",
+      "hot": false,
+      "area_code": "0533",
+      "region_code": "370300",
+      "center_geo": "118.054994,36.813787"
+    },
+    {
+      "code": "101121400",
+      "name": "枣庄",
+      "first_char": "Z",
+      "hot": false,
+      "area_code": "0632",
+      "region_code": "370400",
+      "center_geo": "117.323759,34.810858"
+    },
+    {
+      "code": "101160700",
+      "name": "张掖",
+      "first_char": "Z",
+      "hot": false,
+      "area_code": "0936",
+      "region_code": "620700",
+      "center_geo": "100.449858,38.924766"
+    },
+    {
+      "code": "101170500",
+      "name": "中卫",
+      "first_char": "Z",
+      "hot": false,
+      "area_code": "1953",
+      "region_code": "640500",
+      "center_geo": "105.19677,37.500185"
+    },
+    {
+      "code": "101180100",
+      "name": "郑州",
+      "first_char": "Z",
+      "hot": true,
+      "area_code": "0371",
+      "region_code": "410100",
+      "center_geo": "113.625351,34.746303"
+    },
+    {
+      "code": "101181400",
+      "name": "周口",
+      "first_char": "Z",
+      "hot": false,
+      "area_code": "0394",
+      "region_code": "411600",
+      "center_geo": "114.701222,33.634652"
+    },
+    {
+      "code": "101181600",
+      "name": "驻马店",
+      "first_char": "Z",
+      "hot": false,
+      "area_code": "0396",
+      "region_code": "411700",
+      "center_geo": "114.021988,33.014038"
+    },
+    {
+      "code": "101190300",
+      "name": "镇江",
+      "first_char": "Z",
+      "hot": false,
+      "area_code": "0511",
+      "region_code": "321100",
+      "center_geo": "119.424441,32.188141"
+    },
+    {
+      "code": "101211100",
+      "name": "舟山",
+      "first_char": "Z",
+      "hot": false,
+      "area_code": "0580",
+      "region_code": "330900",
+      "center_geo": "122.207395,29.985578"
+    },
+    {
+      "code": "101230600",
+      "name": "漳州",
+      "first_char": "Z",
+      "hot": false,
+      "area_code": "0596",
+      "region_code": "350600",
+      "center_geo": "117.647298,24.515297"
+    },
+    {
+      "code": "101250300",
+      "name": "株洲",
+      "first_char": "Z",
+      "hot": false,
+      "area_code": "0733",
+      "region_code": "430200",
+      "center_geo": "113.132783,27.828862"
+    },
+    {
+      "code": "101251100",
+      "name": "张家界",
+      "first_char": "Z",
+      "hot": false,
+      "area_code": "0744",
+      "region_code": "430800",
+      "center_geo": "110.478887,29.117343"
+    },
+    {
+      "code": "101260200",
+      "name": "遵义",
+      "first_char": "Z",
+      "hot": false,
+      "area_code": "0852",
+      "region_code": "520300",
+      "center_geo": "107.031922,27.721931"
+    },
+    {
+      "code": "101270300",
+      "name": "自贡",
+      "first_char": "Z",
+      "hot": false,
+      "area_code": "0813",
+      "region_code": "510300",
+      "center_geo": "104.779307,29.33924"
+    },
+    {
+      "code": "101271300",
+      "name": "资阳",
+      "first_char": "Z",
+      "hot": false,
+      "area_code": "0832",
+      "region_code": "512000",
+      "center_geo": "104.627265,30.129236"
+    },
+    {
+      "code": "101280700",
+      "name": "珠海",
+      "first_char": "Z",
+      "hot": false,
+      "area_code": "0756",
+      "region_code": "440400",
+      "center_geo": "113.576892,22.271644"
+    },
+    {
+      "code": "101280900",
+      "name": "肇庆",
+      "first_char": "Z",
+      "hot": false,
+      "area_code": "0758",
+      "region_code": "441200",
+      "center_geo": "112.465245,23.047747"
+    },
+    {
+      "code": "101281000",
+      "name": "湛江",
+      "first_char": "Z",
+      "hot": false,
+      "area_code": "0759",
+      "region_code": "440800",
+      "center_geo": "110.357538,21.270108"
+    },
+    {
+      "code": "101281700",
+      "name": "中山",
+      "first_char": "Z",
+      "hot": false,
+      "area_code": "0760",
+      "region_code": "442000",
+      "center_geo": "113.392517,22.517024"
+    },
+    {
+      "code": "101290700",
+      "name": "昭通",
+      "first_char": "Z",
+      "hot": false,
+      "area_code": "0870",
+      "region_code": "530600",
+      "center_geo": "103.717078,27.338185"
+    }
+  ],
+  "city_groups": [
+    {
+      "first_char": "A",
+      "city_codes": [
+        "101070300",
+        "101081200",
+        "101110700",
+        "101131000",
+        "101131500",
+        "101131700",
+        "101140700",
+        "101180200",
+        "101220600",
+        "101260300",
+        "101271900",
+        "101330100"
+      ]
+    },
+    {
+      "first_char": "B",
+      "city_codes": [
+        "101010100",
+        "101060500",
+        "101060800",
+        "101070500",
+        "101080200",
+        "101080800",
+        "101090200",
+        "101110900",
+        "101121100",
+        "101130400",
+        "101130500",
+        "101132100",
+        "101132700",
+        "101161000",
+        "101220200",
+        "101220900",
+        "101260500",
+        "101270900",
+        "101290300",
+        "101301000",
+        "101301300",
+        "101311400",
+        "101311800"
+      ]
+    },
+    {
+      "first_char": "C",
+      "city_codes": [
+        "101040100",
+        "101060100",
+        "101071200",
+        "101080500",
+        "101090400",
+        "101090700",
+        "101100500",
+        "101130300",
+        "101140300",
+        "101191100",
+        "101221000",
+        "101221500",
+        "101250100",
+        "101250500",
+        "101250600",
+        "101270100",
+        "101281500",
+        "101291700",
+        "101300200",
+        "101311200",
+        "101311500"
+      ]
+    },
+    {
+      "first_char": "D",
+      "city_codes": [
+        "101050800",
+        "101051300",
+        "101070200",
+        "101070600",
+        "101100200",
+        "101120400",
+        "101121200",
+        "101160200",
+        "101270600",
+        "101271700",
+        "101281600",
+        "101282200",
+        "101291300",
+        "101291500",
+        "101291600",
+        "101310400",
+        "101310900",
+        "101311000"
+      ]
+    },
+    {
+      "first_char": "E",
+      "city_codes": [
+        "101080600",
+        "101200300",
+        "101201300"
+      ]
+    },
+    {
+      "first_char": "F",
+      "city_codes": [
+        "101070400",
+        "101070900",
+        "101220800",
+        "101230100",
+        "101240400",
+        "101280800",
+        "101301400"
+      ]
+    },
+    {
+      "first_char": "G",
+      "city_codes": [
+        "101150600",
+        "101161400",
+        "101170400",
+        "101240700",
+        "101260100",
+        "101270800",
+        "101271800",
+        "101272100",
+        "101280100",
+        "101300500",
+        "101300800"
+      ]
+    },
+    {
+      "first_char": "H",
+      "city_codes": [
+        "101050100",
+        "101050600",
+        "101051100",
+        "101071400",
+        "101080100",
+        "101080700",
+        "101090800",
+        "101091000",
+        "101110800",
+        "101121000",
+        "101130900",
+        "101131300",
+        "101132600",
+        "101150200",
+        "101150300",
+        "101150400",
+        "101150500",
+        "101150800",
+        "101181200",
+        "101190900",
+        "101200500",
+        "101200600",
+        "101210100",
+        "101210200",
+        "101220100",
+        "101220400",
+        "101221100",
+        "101221600",
+        "101250400",
+        "101251200",
+        "101280300",
+        "101281200",
+        "101291200",
+        "101300700",
+        "101301200",
+        "101310100"
+      ]
+    },
+    {
+      "first_char": "J",
+      "city_codes": [
+        "101050400",
+        "101051000",
+        "101060200",
+        "101070700",
+        "101100400",
+        "101100600",
+        "101120100",
+        "101120700",
+        "101160600",
+        "101160800",
+        "101161200",
+        "101181100",
+        "101181800",
+        "101200800",
+        "101201200",
+        "101210300",
+        "101210900",
+        "101240200",
+        "101240600",
+        "101240800",
+        "101281100",
+        "101281900"
+      ]
+    },
+    {
+      "first_char": "K",
+      "city_codes": [
+        "101130200",
+        "101131100",
+        "101131200",
+        "101132200",
+        "101132300",
+        "101180800",
+        "101290100"
+      ]
+    },
+    {
+      "first_char": "L",
+      "city_codes": [
+        "101060600",
+        "101071000",
+        "101090600",
+        "101100700",
+        "101101100",
+        "101120900",
+        "101121700",
+        "101140100",
+        "101140400",
+        "101160100",
+        "101161100",
+        "101161300",
+        "101180900",
+        "101181500",
+        "101191000",
+        "101210800",
+        "101221400",
+        "101230700",
+        "101250800",
+        "101260600",
+        "101271000",
+        "101271400",
+        "101272000",
+        "101290800",
+        "101290900",
+        "101300300",
+        "101300400",
+        "101311300",
+        "101311600",
+        "101311700"
+      ]
+    },
+    {
+      "first_char": "M",
+      "city_codes": [
+        "101050300",
+        "101220500",
+        "101270400",
+        "101271500",
+        "101280400",
+        "101282000"
+      ]
+    },
+    {
+      "first_char": "N",
+      "city_codes": [
+        "101140600",
+        "101180700",
+        "101190100",
+        "101190500",
+        "101210400",
+        "101230300",
+        "101230900",
+        "101240100",
+        "101270500",
+        "101271200",
+        "101291400",
+        "101300100"
+      ]
+    },
+    {
+      "first_char": "P",
+      "city_codes": [
+        "101071300",
+        "101160300",
+        "101180500",
+        "101181300",
+        "101230400",
+        "101240900",
+        "101270200",
+        "101290500"
+      ]
+    },
+    {
+      "first_char": "Q",
+      "city_codes": [
+        "101050200",
+        "101050900",
+        "101091100",
+        "101120200",
+        "101160400",
+        "101201500",
+        "101211000",
+        "101230500",
+        "101260700",
+        "101260800",
+        "101260900",
+        "101281300",
+        "101290200",
+        "101301100",
+        "101310600",
+        "101311900"
+      ]
+    },
+    {
+      "first_char": "R",
+      "city_codes": [
+        "101121500",
+        "101140200"
+      ]
+    },
+    {
+      "first_char": "S",
+      "city_codes": [
+        "101020100",
+        "101050500",
+        "101051200",
+        "101060300",
+        "101060700",
+        "101070100",
+        "101090100",
+        "101100900",
+        "101110600",
+        "101131600",
+        "101132400",
+        "101140500",
+        "101170200",
+        "101181000",
+        "101181700",
+        "101190400",
+        "101191300",
+        "101201000",
+        "101201100",
+        "101201700",
+        "101210500",
+        "101220700",
+        "101230800",
+        "101240300",
+        "101250900",
+        "101270700",
+        "101280200",
+        "101280500",
+        "101280600",
+        "101282100",
+        "101310200",
+        "101310300"
+      ]
+    },
+    {
+      "first_char": "T",
+      "city_codes": [
+        "101030100",
+        "101060400",
+        "101071100",
+        "101080400",
+        "101090500",
+        "101100100",
+        "101111000",
+        "101120800",
+        "101130800",
+        "101131400",
+        "101131800",
+        "101132000",
+        "101160900",
+        "101191200",
+        "101201600",
+        "101210600",
+        "101221200",
+        "101260400",
+        "101311100",
+        "101341100"
+      ]
+    },
+    {
+      "first_char": "W",
+      "city_codes": [
+        "101080300",
+        "101080900",
+        "101110500",
+        "101120600",
+        "101121300",
+        "101130100",
+        "101131900",
+        "101160500",
+        "101170300",
+        "101190200",
+        "101200100",
+        "101210700",
+        "101220300",
+        "101291100",
+        "101300600",
+        "101310500",
+        "101310700",
+        "101310800"
+      ]
+    },
+    {
+      "first_char": "X",
+      "city_codes": [
+        "101081000",
+        "101081100",
+        "101090900",
+        "101101000",
+        "101110100",
+        "101110200",
+        "101132500",
+        "101150100",
+        "101180300",
+        "101180400",
+        "101180600",
+        "101190800",
+        "101200200",
+        "101200400",
+        "101200700",
+        "101201400",
+        "101221300",
+        "101230200",
+        "101241000",
+        "101250200",
+        "101251400",
+        "101291000",
+        "101320300"
+      ]
+    },
+    {
+      "first_char": "Y",
+      "city_codes": [
+        "101050700",
+        "101060900",
+        "101070800",
+        "101100300",
+        "101100800",
+        "101110300",
+        "101110400",
+        "101120500",
+        "101130600",
+        "101150700",
+        "101170100",
+        "101190600",
+        "101190700",
+        "101200900",
+        "101240500",
+        "101241100",
+        "101250700",
+        "101251000",
+        "101251300",
+        "101271100",
+        "101271600",
+        "101281400",
+        "101281800",
+        "101290400",
+        "101300900"
+      ]
+    },
+    {
+      "first_char": "Z",
+      "city_codes": [
+        "101090300",
+        "101120300",
+        "101121400",
+        "101160700",
+        "101170500",
+        "101180100",
+        "101181400",
+        "101181600",
+        "101190300",
+        "101211100",
+        "101230600",
+        "101250300",
+        "101251100",
+        "101260200",
+        "101270300",
+        "101271300",
+        "101280700",
+        "101280900",
+        "101281000",
+        "101281700",
+        "101290700"
+      ]
+    }
+  ],
+  "hot_city_codes": [
+    "100010000",
+    "101010100",
+    "101020100",
+    "101280100",
+    "101280600",
+    "101210100",
+    "101030100",
+    "101110100",
+    "101190400",
+    "101200100",
+    "101230200",
+    "101250100",
+    "101270100",
+    "101180100",
+    "101040100"
+  ],
+  "industry": [
+    {
+      "code": "0",
+      "name": "不限"
+    },
+    {
+      "code": "100020",
+      "name": "互联网",
+      "group_code": "100000",
+      "group_name": "互联网/AI"
+    },
+    {
+      "code": "100001",
+      "name": "电子商务",
+      "group_code": "100000",
+      "group_name": "互联网/AI"
+    },
+    {
+      "code": "100021",
+      "name": "计算机软件",
+      "group_code": "100000",
+      "group_name": "互联网/AI"
+    },
+    {
+      "code": "100007",
+      "name": "生活服务(O2O)",
+      "group_code": "100000",
+      "group_name": "互联网/AI"
+    },
+    {
+      "code": "100015",
+      "name": "企业服务",
+      "group_code": "100000",
+      "group_name": "互联网/AI"
+    },
+    {
+      "code": "100006",
+      "name": "医疗健康",
+      "group_code": "100000",
+      "group_name": "互联网/AI"
+    },
+    {
+      "code": "100002",
+      "name": "游戏",
+      "group_code": "100000",
+      "group_name": "互联网/AI"
+    },
+    {
+      "code": "100003",
+      "name": "社交网络与媒体",
+      "group_code": "100000",
+      "group_name": "互联网/AI"
+    },
+    {
+      "code": "100028",
+      "name": "人工智能",
+      "group_code": "100000",
+      "group_name": "互联网/AI"
+    },
+    {
+      "code": "100029",
+      "name": "云计算",
+      "group_code": "100000",
+      "group_name": "互联网/AI"
+    },
+    {
+      "code": "100012",
+      "name": "在线教育",
+      "group_code": "100000",
+      "group_name": "互联网/AI"
+    },
+    {
+      "code": "100023",
+      "name": "计算机服务",
+      "group_code": "100000",
+      "group_name": "互联网/AI"
+    },
+    {
+      "code": "100005",
+      "name": "大数据",
+      "group_code": "100000",
+      "group_name": "互联网/AI"
+    },
+    {
+      "code": "100004",
+      "name": "广告营销",
+      "group_code": "100000",
+      "group_name": "互联网/AI"
+    },
+    {
+      "code": "100030",
+      "name": "物联网",
+      "group_code": "100000",
+      "group_name": "互联网/AI"
+    },
+    {
+      "code": "100017",
+      "name": "新零售",
+      "group_code": "100000",
+      "group_name": "互联网/AI"
+    },
+    {
+      "code": "100016",
+      "name": "信息安全",
+      "group_code": "100000",
+      "group_name": "互联网/AI"
+    },
+    {
+      "code": "101405",
+      "name": "半导体/芯片",
+      "group_code": "101400",
+      "group_name": "电子/通信/半导体"
+    },
+    {
+      "code": "101406",
+      "name": "电子/硬件开发",
+      "group_code": "101400",
+      "group_name": "电子/通信/半导体"
+    },
+    {
+      "code": "101402",
+      "name": "通信/网络设备",
+      "group_code": "101400",
+      "group_name": "电子/通信/半导体"
+    },
+    {
+      "code": "101401",
+      "name": "智能硬件/消费电子",
+      "group_code": "101400",
+      "group_name": "电子/通信/半导体"
+    },
+    {
+      "code": "101403",
+      "name": "运营商/增值服务",
+      "group_code": "101400",
+      "group_name": "电子/通信/半导体"
+    },
+    {
+      "code": "101404",
+      "name": "计算机硬件",
+      "group_code": "101400",
+      "group_name": "电子/通信/半导体"
+    },
+    {
+      "code": "101407",
+      "name": "电子/半导体/集成电路",
+      "group_code": "101400",
+      "group_name": "电子/通信/半导体"
+    },
+    {
+      "code": "101101",
+      "name": "餐饮",
+      "group_code": "101100",
+      "group_name": "服务业"
+    },
+    {
+      "code": "101111",
+      "name": "美容",
+      "group_code": "101100",
+      "group_name": "服务业"
+    },
+    {
+      "code": "101112",
+      "name": "美发",
+      "group_code": "101100",
+      "group_name": "服务业"
+    },
+    {
+      "code": "101102",
+      "name": "酒店/民宿",
+      "group_code": "101100",
+      "group_name": "服务业"
+    },
+    {
+      "code": "101107",
+      "name": "休闲/娱乐",
+      "group_code": "101100",
+      "group_name": "服务业"
+    },
+    {
+      "code": "101113",
+      "name": "运动/健身",
+      "group_code": "101100",
+      "group_name": "服务业"
+    },
+    {
+      "code": "101114",
+      "name": "保健/养生",
+      "group_code": "101100",
+      "group_name": "服务业"
+    },
+    {
+      "code": "101109",
+      "name": "家政服务",
+      "group_code": "101100",
+      "group_name": "服务业"
+    },
+    {
+      "code": "101103",
+      "name": "旅游/景区",
+      "group_code": "101100",
+      "group_name": "服务业"
+    },
+    {
+      "code": "101105",
+      "name": "婚庆/摄影",
+      "group_code": "101100",
+      "group_name": "服务业"
+    },
+    {
+      "code": "101110",
+      "name": "宠物服务",
+      "group_code": "101100",
+      "group_name": "服务业"
+    },
+    {
+      "code": "101108",
+      "name": "回收/维修",
+      "group_code": "101100",
+      "group_name": "服务业"
+    },
+    {
+      "code": "101104",
+      "name": "美容/美发",
+      "group_code": "101100",
+      "group_name": "服务业"
+    },
+    {
+      "code": "101106",
+      "name": "其他生活服务",
+      "group_code": "101100",
+      "group_name": "服务业"
+    },
+    {
+      "code": "101011",
+      "name": "批发/零售",
+      "group_code": "101000",
+      "group_name": "消费品/批发/零售"
+    },
+    {
+      "code": "101012",
+      "name": "进出口贸易",
+      "group_code": "101000",
+      "group_name": "消费品/批发/零售"
+    },
+    {
+      "code": "101001",
+      "name": "食品/饮料/烟酒",
+      "group_code": "101000",
+      "group_name": "消费品/批发/零售"
+    },
+    {
+      "code": "101003",
+      "name": "服装/纺织",
+      "group_code": "101000",
+      "group_name": "消费品/批发/零售"
+    },
+    {
+      "code": "101009",
+      "name": "家具/家居",
+      "group_code": "101000",
+      "group_name": "消费品/批发/零售"
+    },
+    {
+      "code": "101010",
+      "name": "家用电器",
+      "group_code": "101000",
+      "group_name": "消费品/批发/零售"
+    },
+    {
+      "code": "101002",
+      "name": "日化",
+      "group_code": "101000",
+      "group_name": "消费品/批发/零售"
+    },
+    {
+      "code": "101006",
+      "name": "珠宝/首饰",
+      "group_code": "101000",
+      "group_name": "消费品/批发/零售"
+    },
+    {
+      "code": "101004",
+      "name": "家具/家电/家居",
+      "group_code": "101000",
+      "group_name": "消费品/批发/零售"
+    },
+    {
+      "code": "101013",
+      "name": "其他消费品",
+      "group_code": "101000",
+      "group_name": "消费品/批发/零售"
+    },
+    {
+      "code": "100704",
+      "name": "装修装饰",
+      "group_code": "100700",
+      "group_name": "房地产/建筑"
+    },
+    {
+      "code": "100708",
+      "name": "房屋建筑工程",
+      "group_code": "100700",
+      "group_name": "房地产/建筑"
+    },
+    {
+      "code": "100709",
+      "name": "土木工程",
+      "group_code": "100700",
+      "group_name": "房地产/建筑"
+    },
+    {
+      "code": "100710",
+      "name": "机电工程",
+      "group_code": "100700",
+      "group_name": "房地产/建筑"
+    },
+    {
+      "code": "100707",
+      "name": "物业管理",
+      "group_code": "100700",
+      "group_name": "房地产/建筑"
+    },
+    {
+      "code": "100706",
+      "name": "房地产中介/租赁",
+      "group_code": "100700",
+      "group_name": "房地产/建筑"
+    },
+    {
+      "code": "100705",
+      "name": "建筑材料",
+      "group_code": "100700",
+      "group_name": "房地产/建筑"
+    },
+    {
+      "code": "100701",
+      "name": "房地产开发经营",
+      "group_code": "100700",
+      "group_name": "房地产/建筑"
+    },
+    {
+      "code": "100703",
+      "name": "建筑设计",
+      "group_code": "100700",
+      "group_name": "房地产/建筑"
+    },
+    {
+      "code": "100711",
+      "name": "建筑工程咨询服务",
+      "group_code": "100700",
+      "group_name": "房地产/建筑"
+    },
+    {
+      "code": "100712",
+      "name": "土地与公共设施管理",
+      "group_code": "100700",
+      "group_name": "房地产/建筑"
+    },
+    {
+      "code": "100702",
+      "name": "工程施工",
+      "group_code": "100700",
+      "group_name": "房地产/建筑"
+    },
+    {
+      "code": "100303",
+      "name": "培训/辅导机构",
+      "group_code": "100300",
+      "group_name": "教育培训"
+    },
+    {
+      "code": "100305",
+      "name": "职业培训",
+      "group_code": "100300",
+      "group_name": "教育培训"
+    },
+    {
+      "code": "100301",
+      "name": "学前教育",
+      "group_code": "100300",
+      "group_name": "教育培训"
+    },
+    {
+      "code": "100302",
+      "name": "学校/学历教育",
+      "group_code": "100300",
+      "group_name": "教育培训"
+    },
+    {
+      "code": "100304",
+      "name": "学术/科研",
+      "group_code": "100300",
+      "group_name": "教育培训"
+    },
+    {
+      "code": "100104",
+      "name": "文化艺术/娱乐",
+      "group_code": "100100",
+      "group_name": "广告/传媒/文化/体育"
+    },
+    {
+      "code": "100105",
+      "name": "体育",
+      "group_code": "100100",
+      "group_name": "广告/传媒/文化/体育"
+    },
+    {
+      "code": "100101",
+      "name": "广告/公关/会展",
+      "group_code": "100100",
+      "group_name": "广告/传媒/文化/体育"
+    },
+    {
+      "code": "100103",
+      "name": "广播/影视",
+      "group_code": "100100",
+      "group_name": "广告/传媒/文化/体育"
+    },
+    {
+      "code": "100102",
+      "name": "新闻/出版",
+      "group_code": "100100",
+      "group_name": "广告/传媒/文化/体育"
+    },
+    {
+      "code": "100906",
+      "name": "通用设备",
+      "group_code": "100900",
+      "group_name": "制造业"
+    },
+    {
+      "code": "100907",
+      "name": "专用设备",
+      "group_code": "100900",
+      "group_name": "制造业"
+    },
+    {
+      "code": "100908",
+      "name": "电气机械/器材",
+      "group_code": "100900",
+      "group_name": "制造业"
+    },
+    {
+      "code": "100909",
+      "name": "金属制品",
+      "group_code": "100900",
+      "group_name": "制造业"
+    },
+    {
+      "code": "100910",
+      "name": "非金属矿物制品",
+      "group_code": "100900",
+      "group_name": "制造业"
+    },
+    {
+      "code": "100911",
+      "name": "橡胶/塑料制品",
+      "group_code": "100900",
+      "group_name": "制造业"
+    },
+    {
+      "code": "100912",
+      "name": "化学原料/化学制品",
+      "group_code": "100900",
+      "group_name": "制造业"
+    },
+    {
+      "code": "100913",
+      "name": "仪器仪表",
+      "group_code": "100900",
+      "group_name": "制造业"
+    },
+    {
+      "code": "100914",
+      "name": "自动化设备",
+      "group_code": "100900",
+      "group_name": "制造业"
+    },
+    {
+      "code": "100904",
+      "name": "印刷/包装/造纸",
+      "group_code": "100900",
+      "group_name": "制造业"
+    },
+    {
+      "code": "100905",
+      "name": "铁路/船舶/航空/航天制造",
+      "group_code": "100900",
+      "group_name": "制造业"
+    },
+    {
+      "code": "100915",
+      "name": "计算机/通信/其他电子设备",
+      "group_code": "100900",
+      "group_name": "制造业"
+    },
+    {
+      "code": "100916",
+      "name": "新材料",
+      "group_code": "100900",
+      "group_name": "制造业"
+    },
+    {
+      "code": "100901",
+      "name": "机械设备/机电/重工",
+      "group_code": "100900",
+      "group_name": "制造业"
+    },
+    {
+      "code": "100902",
+      "name": "仪器仪表/工业自动化",
+      "group_code": "100900",
+      "group_name": "制造业"
+    },
+    {
+      "code": "100903",
+      "name": "原材料及加工/模具",
+      "group_code": "100900",
+      "group_name": "制造业"
+    },
+    {
+      "code": "100917",
+      "name": "其他制造业",
+      "group_code": "100900",
+      "group_name": "制造业"
+    },
+    {
+      "code": "100601",
+      "name": "咨询",
+      "group_code": "100600",
+      "group_name": "专业服务"
+    },
+    {
+      "code": "100605",
+      "name": "财务/审计/税务",
+      "group_code": "100600",
+      "group_name": "专业服务"
+    },
+    {
+      "code": "100604",
+      "name": "人力资源服务",
+      "group_code": "100600",
+      "group_name": "专业服务"
+    },
+    {
+      "code": "100602",
+      "name": "法律",
+      "group_code": "100600",
+      "group_name": "专业服务"
+    },
+    {
+      "code": "100609",
+      "name": "检测/认证/知识产权",
+      "group_code": "100600",
+      "group_name": "专业服务"
+    },
+    {
+      "code": "100603",
+      "name": "翻译",
+      "group_code": "100600",
+      "group_name": "专业服务"
+    },
+    {
+      "code": "100608",
+      "name": "其他专业服务",
+      "group_code": "100600",
+      "group_name": "专业服务"
+    },
+    {
+      "code": "100402",
+      "name": "医疗服务",
+      "group_code": "100400",
+      "group_name": "制药/医疗"
+    },
+    {
+      "code": "100404",
+      "name": "医美服务",
+      "group_code": "100400",
+      "group_name": "制药/医疗"
+    },
+    {
+      "code": "100403",
+      "name": "医疗器械",
+      "group_code": "100400",
+      "group_name": "制药/医疗"
+    },
+    {
+      "code": "100405",
+      "name": "IVD",
+      "group_code": "100400",
+      "group_name": "制药/医疗"
+    },
+    {
+      "code": "100401",
+      "name": "生物/制药",
+      "group_code": "100400",
+      "group_name": "制药/医疗"
+    },
+    {
+      "code": "100406",
+      "name": "医药批发零售",
+      "group_code": "100400",
+      "group_name": "制药/医疗"
+    },
+    {
+      "code": "100407",
+      "name": "医疗研发外包",
+      "group_code": "100400",
+      "group_name": "制药/医疗"
+    },
+    {
+      "code": "100804",
+      "name": "新能源汽车",
+      "group_code": "100800",
+      "group_name": "汽车"
+    },
+    {
+      "code": "100805",
+      "name": "汽车智能网联",
+      "group_code": "100800",
+      "group_name": "汽车"
+    },
+    {
+      "code": "100806",
+      "name": "汽车经销商",
+      "group_code": "100800",
+      "group_name": "汽车"
+    },
+    {
+      "code": "100807",
+      "name": "汽车后市场",
+      "group_code": "100800",
+      "group_name": "汽车"
+    },
+    {
+      "code": "100801",
+      "name": "汽车研发/制造",
+      "group_code": "100800",
+      "group_name": "汽车"
+    },
+    {
+      "code": "100802",
+      "name": "汽车零部件",
+      "group_code": "100800",
+      "group_name": "汽车"
+    },
+    {
+      "code": "100808",
+      "name": "摩托车/自行车制造",
+      "group_code": "100800",
+      "group_name": "汽车"
+    },
+    {
+      "code": "100803",
+      "name": "4S店/后市场",
+      "group_code": "100800",
+      "group_name": "汽车"
+    },
+    {
+      "code": "100505",
+      "name": "即时配送",
+      "group_code": "100500",
+      "group_name": "交通运输/物流"
+    },
+    {
+      "code": "100506",
+      "name": "快递",
+      "group_code": "100500",
+      "group_name": "交通运输/物流"
+    },
+    {
+      "code": "100507",
+      "name": "公路物流",
+      "group_code": "100500",
+      "group_name": "交通运输/物流"
+    },
+    {
+      "code": "100508",
+      "name": "同城货运",
+      "group_code": "100500",
+      "group_name": "交通运输/物流"
+    },
+    {
+      "code": "100509",
+      "name": "跨境物流",
+      "group_code": "100500",
+      "group_name": "交通运输/物流"
+    },
+    {
+      "code": "100510",
+      "name": "装卸搬运和仓储业",
+      "group_code": "100500",
+      "group_name": "交通运输/物流"
+    },
+    {
+      "code": "100511",
+      "name": "客运服务",
+      "group_code": "100500",
+      "group_name": "交通运输/物流"
+    },
+    {
+      "code": "100512",
+      "name": "港口/铁路/公路/机场",
+      "group_code": "100500",
+      "group_name": "交通运输/物流"
+    },
+    {
+      "code": "100501",
+      "name": "交通/运输",
+      "group_code": "100500",
+      "group_name": "交通运输/物流"
+    },
+    {
+      "code": "100502",
+      "name": "物流/仓储",
+      "group_code": "100500",
+      "group_name": "交通运输/物流"
+    },
+    {
+      "code": "101208",
+      "name": "光伏",
+      "group_code": "101200",
+      "group_name": "能源/化工/环保"
+    },
+    {
+      "code": "101209",
+      "name": "储能",
+      "group_code": "101200",
+      "group_name": "能源/化工/环保"
+    },
+    {
+      "code": "101210",
+      "name": "动力电池",
+      "group_code": "101200",
+      "group_name": "能源/化工/环保"
+    },
+    {
+      "code": "101211",
+      "name": "风电",
+      "group_code": "101200",
+      "group_name": "能源/化工/环保"
+    },
+    {
+      "code": "101212",
+      "name": "其他新能源",
+      "group_code": "101200",
+      "group_name": "能源/化工/环保"
+    },
+    {
+      "code": "101207",
+      "name": "环保",
+      "group_code": "101200",
+      "group_name": "能源/化工/环保"
+    },
+    {
+      "code": "101202",
+      "name": "化工",
+      "group_code": "101200",
+      "group_name": "能源/化工/环保"
+    },
+    {
+      "code": "101205",
+      "name": "电力/热力/燃气/水利",
+      "group_code": "101200",
+      "group_name": "能源/化工/环保"
+    },
+    {
+      "code": "101201",
+      "name": "石油/石化",
+      "group_code": "101200",
+      "group_name": "能源/化工/环保"
+    },
+    {
+      "code": "101203",
+      "name": "矿产/地质",
+      "group_code": "101200",
+      "group_name": "能源/化工/环保"
+    },
+    {
+      "code": "101204",
+      "name": "采掘/冶炼",
+      "group_code": "101200",
+      "group_name": "能源/化工/环保"
+    },
+    {
+      "code": "101206",
+      "name": "新能源",
+      "group_code": "101200",
+      "group_name": "能源/化工/环保"
+    },
+    {
+      "code": "100206",
+      "name": "互联网金融",
+      "group_code": "100200",
+      "group_name": "金融"
+    },
+    {
+      "code": "100201",
+      "name": "银行",
+      "group_code": "100200",
+      "group_name": "金融"
+    },
+    {
+      "code": "100207",
+      "name": "投资/融资",
+      "group_code": "100200",
+      "group_name": "金融"
+    },
+    {
+      "code": "100203",
+      "name": "证券/期货",
+      "group_code": "100200",
+      "group_name": "金融"
+    },
+    {
+      "code": "100204",
+      "name": "基金",
+      "group_code": "100200",
+      "group_name": "金融"
+    },
+    {
+      "code": "100202",
+      "name": "保险",
+      "group_code": "100200",
+      "group_name": "金融"
+    },
+    {
+      "code": "100208",
+      "name": "租赁/拍卖/典当/担保",
+      "group_code": "100200",
+      "group_name": "金融"
+    },
+    {
+      "code": "100205",
+      "name": "信托",
+      "group_code": "100200",
+      "group_name": "金融"
+    },
+    {
+      "code": "100209",
+      "name": "财富管理",
+      "group_code": "100200",
+      "group_name": "金融"
+    },
+    {
+      "code": "100210",
+      "name": "其他金融业",
+      "group_code": "100200",
+      "group_name": "金融"
+    },
+    {
+      "code": "101303",
+      "name": "农/林/牧/渔",
+      "group_code": "101300",
+      "group_name": "政府/非营利组织/其他"
+    },
+    {
+      "code": "101302",
+      "name": "非营利组织",
+      "group_code": "101300",
+      "group_name": "政府/非营利组织/其他"
+    },
+    {
+      "code": "101301",
+      "name": "政府/公共事业",
+      "group_code": "101300",
+      "group_name": "政府/非营利组织/其他"
+    },
+    {
+      "code": "101304",
+      "name": "其他行业",
+      "group_code": "101300",
+      "group_name": "政府/非营利组织/其他"
+    }
+  ],
+  "industry_groups": [
+    {
+      "code": "100000",
+      "name": "互联网/AI",
+      "options": [
+        {
+          "code": "100020",
+          "name": "互联网",
+          "group_code": "100000",
+          "group_name": "互联网/AI"
+        },
+        {
+          "code": "100001",
+          "name": "电子商务",
+          "group_code": "100000",
+          "group_name": "互联网/AI"
+        },
+        {
+          "code": "100021",
+          "name": "计算机软件",
+          "group_code": "100000",
+          "group_name": "互联网/AI"
+        },
+        {
+          "code": "100007",
+          "name": "生活服务(O2O)",
+          "group_code": "100000",
+          "group_name": "互联网/AI"
+        },
+        {
+          "code": "100015",
+          "name": "企业服务",
+          "group_code": "100000",
+          "group_name": "互联网/AI"
+        },
+        {
+          "code": "100006",
+          "name": "医疗健康",
+          "group_code": "100000",
+          "group_name": "互联网/AI"
+        },
+        {
+          "code": "100002",
+          "name": "游戏",
+          "group_code": "100000",
+          "group_name": "互联网/AI"
+        },
+        {
+          "code": "100003",
+          "name": "社交网络与媒体",
+          "group_code": "100000",
+          "group_name": "互联网/AI"
+        },
+        {
+          "code": "100028",
+          "name": "人工智能",
+          "group_code": "100000",
+          "group_name": "互联网/AI"
+        },
+        {
+          "code": "100029",
+          "name": "云计算",
+          "group_code": "100000",
+          "group_name": "互联网/AI"
+        },
+        {
+          "code": "100012",
+          "name": "在线教育",
+          "group_code": "100000",
+          "group_name": "互联网/AI"
+        },
+        {
+          "code": "100023",
+          "name": "计算机服务",
+          "group_code": "100000",
+          "group_name": "互联网/AI"
+        },
+        {
+          "code": "100005",
+          "name": "大数据",
+          "group_code": "100000",
+          "group_name": "互联网/AI"
+        },
+        {
+          "code": "100004",
+          "name": "广告营销",
+          "group_code": "100000",
+          "group_name": "互联网/AI"
+        },
+        {
+          "code": "100030",
+          "name": "物联网",
+          "group_code": "100000",
+          "group_name": "互联网/AI"
+        },
+        {
+          "code": "100017",
+          "name": "新零售",
+          "group_code": "100000",
+          "group_name": "互联网/AI"
+        },
+        {
+          "code": "100016",
+          "name": "信息安全",
+          "group_code": "100000",
+          "group_name": "互联网/AI"
+        }
+      ]
+    },
+    {
+      "code": "101400",
+      "name": "电子/通信/半导体",
+      "options": [
+        {
+          "code": "101405",
+          "name": "半导体/芯片",
+          "group_code": "101400",
+          "group_name": "电子/通信/半导体"
+        },
+        {
+          "code": "101406",
+          "name": "电子/硬件开发",
+          "group_code": "101400",
+          "group_name": "电子/通信/半导体"
+        },
+        {
+          "code": "101402",
+          "name": "通信/网络设备",
+          "group_code": "101400",
+          "group_name": "电子/通信/半导体"
+        },
+        {
+          "code": "101401",
+          "name": "智能硬件/消费电子",
+          "group_code": "101400",
+          "group_name": "电子/通信/半导体"
+        },
+        {
+          "code": "101403",
+          "name": "运营商/增值服务",
+          "group_code": "101400",
+          "group_name": "电子/通信/半导体"
+        },
+        {
+          "code": "101404",
+          "name": "计算机硬件",
+          "group_code": "101400",
+          "group_name": "电子/通信/半导体"
+        },
+        {
+          "code": "101407",
+          "name": "电子/半导体/集成电路",
+          "group_code": "101400",
+          "group_name": "电子/通信/半导体"
+        }
+      ]
+    },
+    {
+      "code": "101100",
+      "name": "服务业",
+      "options": [
+        {
+          "code": "101101",
+          "name": "餐饮",
+          "group_code": "101100",
+          "group_name": "服务业"
+        },
+        {
+          "code": "101111",
+          "name": "美容",
+          "group_code": "101100",
+          "group_name": "服务业"
+        },
+        {
+          "code": "101112",
+          "name": "美发",
+          "group_code": "101100",
+          "group_name": "服务业"
+        },
+        {
+          "code": "101102",
+          "name": "酒店/民宿",
+          "group_code": "101100",
+          "group_name": "服务业"
+        },
+        {
+          "code": "101107",
+          "name": "休闲/娱乐",
+          "group_code": "101100",
+          "group_name": "服务业"
+        },
+        {
+          "code": "101113",
+          "name": "运动/健身",
+          "group_code": "101100",
+          "group_name": "服务业"
+        },
+        {
+          "code": "101114",
+          "name": "保健/养生",
+          "group_code": "101100",
+          "group_name": "服务业"
+        },
+        {
+          "code": "101109",
+          "name": "家政服务",
+          "group_code": "101100",
+          "group_name": "服务业"
+        },
+        {
+          "code": "101103",
+          "name": "旅游/景区",
+          "group_code": "101100",
+          "group_name": "服务业"
+        },
+        {
+          "code": "101105",
+          "name": "婚庆/摄影",
+          "group_code": "101100",
+          "group_name": "服务业"
+        },
+        {
+          "code": "101110",
+          "name": "宠物服务",
+          "group_code": "101100",
+          "group_name": "服务业"
+        },
+        {
+          "code": "101108",
+          "name": "回收/维修",
+          "group_code": "101100",
+          "group_name": "服务业"
+        },
+        {
+          "code": "101104",
+          "name": "美容/美发",
+          "group_code": "101100",
+          "group_name": "服务业"
+        },
+        {
+          "code": "101106",
+          "name": "其他生活服务",
+          "group_code": "101100",
+          "group_name": "服务业"
+        }
+      ]
+    },
+    {
+      "code": "101000",
+      "name": "消费品/批发/零售",
+      "options": [
+        {
+          "code": "101011",
+          "name": "批发/零售",
+          "group_code": "101000",
+          "group_name": "消费品/批发/零售"
+        },
+        {
+          "code": "101012",
+          "name": "进出口贸易",
+          "group_code": "101000",
+          "group_name": "消费品/批发/零售"
+        },
+        {
+          "code": "101001",
+          "name": "食品/饮料/烟酒",
+          "group_code": "101000",
+          "group_name": "消费品/批发/零售"
+        },
+        {
+          "code": "101003",
+          "name": "服装/纺织",
+          "group_code": "101000",
+          "group_name": "消费品/批发/零售"
+        },
+        {
+          "code": "101009",
+          "name": "家具/家居",
+          "group_code": "101000",
+          "group_name": "消费品/批发/零售"
+        },
+        {
+          "code": "101010",
+          "name": "家用电器",
+          "group_code": "101000",
+          "group_name": "消费品/批发/零售"
+        },
+        {
+          "code": "101002",
+          "name": "日化",
+          "group_code": "101000",
+          "group_name": "消费品/批发/零售"
+        },
+        {
+          "code": "101006",
+          "name": "珠宝/首饰",
+          "group_code": "101000",
+          "group_name": "消费品/批发/零售"
+        },
+        {
+          "code": "101004",
+          "name": "家具/家电/家居",
+          "group_code": "101000",
+          "group_name": "消费品/批发/零售"
+        },
+        {
+          "code": "101013",
+          "name": "其他消费品",
+          "group_code": "101000",
+          "group_name": "消费品/批发/零售"
+        }
+      ]
+    },
+    {
+      "code": "100700",
+      "name": "房地产/建筑",
+      "options": [
+        {
+          "code": "100704",
+          "name": "装修装饰",
+          "group_code": "100700",
+          "group_name": "房地产/建筑"
+        },
+        {
+          "code": "100708",
+          "name": "房屋建筑工程",
+          "group_code": "100700",
+          "group_name": "房地产/建筑"
+        },
+        {
+          "code": "100709",
+          "name": "土木工程",
+          "group_code": "100700",
+          "group_name": "房地产/建筑"
+        },
+        {
+          "code": "100710",
+          "name": "机电工程",
+          "group_code": "100700",
+          "group_name": "房地产/建筑"
+        },
+        {
+          "code": "100707",
+          "name": "物业管理",
+          "group_code": "100700",
+          "group_name": "房地产/建筑"
+        },
+        {
+          "code": "100706",
+          "name": "房地产中介/租赁",
+          "group_code": "100700",
+          "group_name": "房地产/建筑"
+        },
+        {
+          "code": "100705",
+          "name": "建筑材料",
+          "group_code": "100700",
+          "group_name": "房地产/建筑"
+        },
+        {
+          "code": "100701",
+          "name": "房地产开发经营",
+          "group_code": "100700",
+          "group_name": "房地产/建筑"
+        },
+        {
+          "code": "100703",
+          "name": "建筑设计",
+          "group_code": "100700",
+          "group_name": "房地产/建筑"
+        },
+        {
+          "code": "100711",
+          "name": "建筑工程咨询服务",
+          "group_code": "100700",
+          "group_name": "房地产/建筑"
+        },
+        {
+          "code": "100712",
+          "name": "土地与公共设施管理",
+          "group_code": "100700",
+          "group_name": "房地产/建筑"
+        },
+        {
+          "code": "100702",
+          "name": "工程施工",
+          "group_code": "100700",
+          "group_name": "房地产/建筑"
+        }
+      ]
+    },
+    {
+      "code": "100300",
+      "name": "教育培训",
+      "options": [
+        {
+          "code": "100303",
+          "name": "培训/辅导机构",
+          "group_code": "100300",
+          "group_name": "教育培训"
+        },
+        {
+          "code": "100305",
+          "name": "职业培训",
+          "group_code": "100300",
+          "group_name": "教育培训"
+        },
+        {
+          "code": "100301",
+          "name": "学前教育",
+          "group_code": "100300",
+          "group_name": "教育培训"
+        },
+        {
+          "code": "100302",
+          "name": "学校/学历教育",
+          "group_code": "100300",
+          "group_name": "教育培训"
+        },
+        {
+          "code": "100304",
+          "name": "学术/科研",
+          "group_code": "100300",
+          "group_name": "教育培训"
+        }
+      ]
+    },
+    {
+      "code": "100100",
+      "name": "广告/传媒/文化/体育",
+      "options": [
+        {
+          "code": "100104",
+          "name": "文化艺术/娱乐",
+          "group_code": "100100",
+          "group_name": "广告/传媒/文化/体育"
+        },
+        {
+          "code": "100105",
+          "name": "体育",
+          "group_code": "100100",
+          "group_name": "广告/传媒/文化/体育"
+        },
+        {
+          "code": "100101",
+          "name": "广告/公关/会展",
+          "group_code": "100100",
+          "group_name": "广告/传媒/文化/体育"
+        },
+        {
+          "code": "100103",
+          "name": "广播/影视",
+          "group_code": "100100",
+          "group_name": "广告/传媒/文化/体育"
+        },
+        {
+          "code": "100102",
+          "name": "新闻/出版",
+          "group_code": "100100",
+          "group_name": "广告/传媒/文化/体育"
+        }
+      ]
+    },
+    {
+      "code": "100900",
+      "name": "制造业",
+      "options": [
+        {
+          "code": "100906",
+          "name": "通用设备",
+          "group_code": "100900",
+          "group_name": "制造业"
+        },
+        {
+          "code": "100907",
+          "name": "专用设备",
+          "group_code": "100900",
+          "group_name": "制造业"
+        },
+        {
+          "code": "100908",
+          "name": "电气机械/器材",
+          "group_code": "100900",
+          "group_name": "制造业"
+        },
+        {
+          "code": "100909",
+          "name": "金属制品",
+          "group_code": "100900",
+          "group_name": "制造业"
+        },
+        {
+          "code": "100910",
+          "name": "非金属矿物制品",
+          "group_code": "100900",
+          "group_name": "制造业"
+        },
+        {
+          "code": "100911",
+          "name": "橡胶/塑料制品",
+          "group_code": "100900",
+          "group_name": "制造业"
+        },
+        {
+          "code": "100912",
+          "name": "化学原料/化学制品",
+          "group_code": "100900",
+          "group_name": "制造业"
+        },
+        {
+          "code": "100913",
+          "name": "仪器仪表",
+          "group_code": "100900",
+          "group_name": "制造业"
+        },
+        {
+          "code": "100914",
+          "name": "自动化设备",
+          "group_code": "100900",
+          "group_name": "制造业"
+        },
+        {
+          "code": "100904",
+          "name": "印刷/包装/造纸",
+          "group_code": "100900",
+          "group_name": "制造业"
+        },
+        {
+          "code": "100905",
+          "name": "铁路/船舶/航空/航天制造",
+          "group_code": "100900",
+          "group_name": "制造业"
+        },
+        {
+          "code": "100915",
+          "name": "计算机/通信/其他电子设备",
+          "group_code": "100900",
+          "group_name": "制造业"
+        },
+        {
+          "code": "100916",
+          "name": "新材料",
+          "group_code": "100900",
+          "group_name": "制造业"
+        },
+        {
+          "code": "100901",
+          "name": "机械设备/机电/重工",
+          "group_code": "100900",
+          "group_name": "制造业"
+        },
+        {
+          "code": "100902",
+          "name": "仪器仪表/工业自动化",
+          "group_code": "100900",
+          "group_name": "制造业"
+        },
+        {
+          "code": "100903",
+          "name": "原材料及加工/模具",
+          "group_code": "100900",
+          "group_name": "制造业"
+        },
+        {
+          "code": "100917",
+          "name": "其他制造业",
+          "group_code": "100900",
+          "group_name": "制造业"
+        }
+      ]
+    },
+    {
+      "code": "100600",
+      "name": "专业服务",
+      "options": [
+        {
+          "code": "100601",
+          "name": "咨询",
+          "group_code": "100600",
+          "group_name": "专业服务"
+        },
+        {
+          "code": "100605",
+          "name": "财务/审计/税务",
+          "group_code": "100600",
+          "group_name": "专业服务"
+        },
+        {
+          "code": "100604",
+          "name": "人力资源服务",
+          "group_code": "100600",
+          "group_name": "专业服务"
+        },
+        {
+          "code": "100602",
+          "name": "法律",
+          "group_code": "100600",
+          "group_name": "专业服务"
+        },
+        {
+          "code": "100609",
+          "name": "检测/认证/知识产权",
+          "group_code": "100600",
+          "group_name": "专业服务"
+        },
+        {
+          "code": "100603",
+          "name": "翻译",
+          "group_code": "100600",
+          "group_name": "专业服务"
+        },
+        {
+          "code": "100608",
+          "name": "其他专业服务",
+          "group_code": "100600",
+          "group_name": "专业服务"
+        }
+      ]
+    },
+    {
+      "code": "100400",
+      "name": "制药/医疗",
+      "options": [
+        {
+          "code": "100402",
+          "name": "医疗服务",
+          "group_code": "100400",
+          "group_name": "制药/医疗"
+        },
+        {
+          "code": "100404",
+          "name": "医美服务",
+          "group_code": "100400",
+          "group_name": "制药/医疗"
+        },
+        {
+          "code": "100403",
+          "name": "医疗器械",
+          "group_code": "100400",
+          "group_name": "制药/医疗"
+        },
+        {
+          "code": "100405",
+          "name": "IVD",
+          "group_code": "100400",
+          "group_name": "制药/医疗"
+        },
+        {
+          "code": "100401",
+          "name": "生物/制药",
+          "group_code": "100400",
+          "group_name": "制药/医疗"
+        },
+        {
+          "code": "100406",
+          "name": "医药批发零售",
+          "group_code": "100400",
+          "group_name": "制药/医疗"
+        },
+        {
+          "code": "100407",
+          "name": "医疗研发外包",
+          "group_code": "100400",
+          "group_name": "制药/医疗"
+        }
+      ]
+    },
+    {
+      "code": "100800",
+      "name": "汽车",
+      "options": [
+        {
+          "code": "100804",
+          "name": "新能源汽车",
+          "group_code": "100800",
+          "group_name": "汽车"
+        },
+        {
+          "code": "100805",
+          "name": "汽车智能网联",
+          "group_code": "100800",
+          "group_name": "汽车"
+        },
+        {
+          "code": "100806",
+          "name": "汽车经销商",
+          "group_code": "100800",
+          "group_name": "汽车"
+        },
+        {
+          "code": "100807",
+          "name": "汽车后市场",
+          "group_code": "100800",
+          "group_name": "汽车"
+        },
+        {
+          "code": "100801",
+          "name": "汽车研发/制造",
+          "group_code": "100800",
+          "group_name": "汽车"
+        },
+        {
+          "code": "100802",
+          "name": "汽车零部件",
+          "group_code": "100800",
+          "group_name": "汽车"
+        },
+        {
+          "code": "100808",
+          "name": "摩托车/自行车制造",
+          "group_code": "100800",
+          "group_name": "汽车"
+        },
+        {
+          "code": "100803",
+          "name": "4S店/后市场",
+          "group_code": "100800",
+          "group_name": "汽车"
+        }
+      ]
+    },
+    {
+      "code": "100500",
+      "name": "交通运输/物流",
+      "options": [
+        {
+          "code": "100505",
+          "name": "即时配送",
+          "group_code": "100500",
+          "group_name": "交通运输/物流"
+        },
+        {
+          "code": "100506",
+          "name": "快递",
+          "group_code": "100500",
+          "group_name": "交通运输/物流"
+        },
+        {
+          "code": "100507",
+          "name": "公路物流",
+          "group_code": "100500",
+          "group_name": "交通运输/物流"
+        },
+        {
+          "code": "100508",
+          "name": "同城货运",
+          "group_code": "100500",
+          "group_name": "交通运输/物流"
+        },
+        {
+          "code": "100509",
+          "name": "跨境物流",
+          "group_code": "100500",
+          "group_name": "交通运输/物流"
+        },
+        {
+          "code": "100510",
+          "name": "装卸搬运和仓储业",
+          "group_code": "100500",
+          "group_name": "交通运输/物流"
+        },
+        {
+          "code": "100511",
+          "name": "客运服务",
+          "group_code": "100500",
+          "group_name": "交通运输/物流"
+        },
+        {
+          "code": "100512",
+          "name": "港口/铁路/公路/机场",
+          "group_code": "100500",
+          "group_name": "交通运输/物流"
+        },
+        {
+          "code": "100501",
+          "name": "交通/运输",
+          "group_code": "100500",
+          "group_name": "交通运输/物流"
+        },
+        {
+          "code": "100502",
+          "name": "物流/仓储",
+          "group_code": "100500",
+          "group_name": "交通运输/物流"
+        }
+      ]
+    },
+    {
+      "code": "101200",
+      "name": "能源/化工/环保",
+      "options": [
+        {
+          "code": "101208",
+          "name": "光伏",
+          "group_code": "101200",
+          "group_name": "能源/化工/环保"
+        },
+        {
+          "code": "101209",
+          "name": "储能",
+          "group_code": "101200",
+          "group_name": "能源/化工/环保"
+        },
+        {
+          "code": "101210",
+          "name": "动力电池",
+          "group_code": "101200",
+          "group_name": "能源/化工/环保"
+        },
+        {
+          "code": "101211",
+          "name": "风电",
+          "group_code": "101200",
+          "group_name": "能源/化工/环保"
+        },
+        {
+          "code": "101212",
+          "name": "其他新能源",
+          "group_code": "101200",
+          "group_name": "能源/化工/环保"
+        },
+        {
+          "code": "101207",
+          "name": "环保",
+          "group_code": "101200",
+          "group_name": "能源/化工/环保"
+        },
+        {
+          "code": "101202",
+          "name": "化工",
+          "group_code": "101200",
+          "group_name": "能源/化工/环保"
+        },
+        {
+          "code": "101205",
+          "name": "电力/热力/燃气/水利",
+          "group_code": "101200",
+          "group_name": "能源/化工/环保"
+        },
+        {
+          "code": "101201",
+          "name": "石油/石化",
+          "group_code": "101200",
+          "group_name": "能源/化工/环保"
+        },
+        {
+          "code": "101203",
+          "name": "矿产/地质",
+          "group_code": "101200",
+          "group_name": "能源/化工/环保"
+        },
+        {
+          "code": "101204",
+          "name": "采掘/冶炼",
+          "group_code": "101200",
+          "group_name": "能源/化工/环保"
+        },
+        {
+          "code": "101206",
+          "name": "新能源",
+          "group_code": "101200",
+          "group_name": "能源/化工/环保"
+        }
+      ]
+    },
+    {
+      "code": "100200",
+      "name": "金融",
+      "options": [
+        {
+          "code": "100206",
+          "name": "互联网金融",
+          "group_code": "100200",
+          "group_name": "金融"
+        },
+        {
+          "code": "100201",
+          "name": "银行",
+          "group_code": "100200",
+          "group_name": "金融"
+        },
+        {
+          "code": "100207",
+          "name": "投资/融资",
+          "group_code": "100200",
+          "group_name": "金融"
+        },
+        {
+          "code": "100203",
+          "name": "证券/期货",
+          "group_code": "100200",
+          "group_name": "金融"
+        },
+        {
+          "code": "100204",
+          "name": "基金",
+          "group_code": "100200",
+          "group_name": "金融"
+        },
+        {
+          "code": "100202",
+          "name": "保险",
+          "group_code": "100200",
+          "group_name": "金融"
+        },
+        {
+          "code": "100208",
+          "name": "租赁/拍卖/典当/担保",
+          "group_code": "100200",
+          "group_name": "金融"
+        },
+        {
+          "code": "100205",
+          "name": "信托",
+          "group_code": "100200",
+          "group_name": "金融"
+        },
+        {
+          "code": "100209",
+          "name": "财富管理",
+          "group_code": "100200",
+          "group_name": "金融"
+        },
+        {
+          "code": "100210",
+          "name": "其他金融业",
+          "group_code": "100200",
+          "group_name": "金融"
+        }
+      ]
+    },
+    {
+      "code": "101300",
+      "name": "政府/非营利组织/其他",
+      "options": [
+        {
+          "code": "101303",
+          "name": "农/林/牧/渔",
+          "group_code": "101300",
+          "group_name": "政府/非营利组织/其他"
+        },
+        {
+          "code": "101302",
+          "name": "非营利组织",
+          "group_code": "101300",
+          "group_name": "政府/非营利组织/其他"
+        },
+        {
+          "code": "101301",
+          "name": "政府/公共事业",
+          "group_code": "101300",
+          "group_name": "政府/非营利组织/其他"
+        },
+        {
+          "code": "101304",
+          "name": "其他行业",
+          "group_code": "101300",
+          "group_name": "政府/非营利组织/其他"
+        }
+      ]
+    }
+  ]
+}
