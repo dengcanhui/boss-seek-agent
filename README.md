@@ -2,6 +2,23 @@
 
 一个以“Agent 维护求职任务 + 确定性浏览器执行”为核心的 BOSS 求职 Agent。
 
+## License / 许可证
+
+本项目采用 **PolyForm Noncommercial License 1.0.0 + 单独商业授权** 的授权模式。
+
+- ✅ 允许个人学习、研究、实验和其他符合许可证条款的非商业使用。
+- ✅ 允许在非商业用途范围内修改和分发代码，但必须遵守 [`LICENSE`](./LICENSE) 中的完整条款。
+- ❌ 未经作者事先书面授权，不允许用于企业商业业务、收费 SaaS、商业产品集成、收费部署/定制/咨询、商业转售等商业用途。
+- 💼 如需商业使用，请先阅读 [`COMMERCIAL_LICENSE.md`](./COMMERCIAL_LICENSE.md) 并联系作者取得单独商业授权。
+
+商业授权联系：2629439590@qq.com  
+GitHub：<https://github.com/dengcanhui>
+
+> Commercial use requires a separate commercial license from the author in advance.
+
+完整非商业许可证：[`LICENSE`](./LICENSE)  
+商业授权说明：[`COMMERCIAL_LICENSE.md`](./COMMERCIAL_LICENSE.md)
+
 ## 当前边界
 
 - Agent 负责理解自然语言、维护搜索任务、更新长期求职画像。
