@@ -72,14 +72,6 @@ class FakeJobSeekTasks:
         return []
 
 
-class FakeBossSearchOptions:
-    def semantic_guide(self):
-        return {
-            "allowed_values": {"salary": ["10-20K"]},
-            "field_rules": {"city": "具体城市名称"},
-        }
-
-
 async def _same_conversation_is_serialized():
     chat = FakeChatRepository()
     llm = BlockingLLM()
@@ -89,7 +81,6 @@ async def _same_conversation_is_serialized():
         FakeMemory(chat),
         chat,
         FakeJobSeekTasks(),
-        FakeBossSearchOptions(),
     )
 
     first = asyncio.create_task(runtime.run("same", "first"))
@@ -113,7 +104,6 @@ async def _different_conversations_can_overlap():
         FakeMemory(chat),
         chat,
         FakeJobSeekTasks(),
-        FakeBossSearchOptions(),
     )
 
     first = asyncio.create_task(runtime.run("a", "first"))
@@ -141,7 +131,6 @@ def test_agent_context_includes_previous_chat_history():
         FakeMemory(chat),
         chat,
         FakeJobSeekTasks(),
-        FakeBossSearchOptions(),
     )
 
     assert asyncio.run(runtime.run("history", "这一轮消息")) == "ok"
@@ -152,7 +141,7 @@ def test_agent_context_includes_previous_chat_history():
     ]
 
 
-def test_agent_context_includes_search_parameter_guide():
+def test_agent_context_does_not_duplicate_search_enum_guide():
     chat = FakeChatRepository()
     llm = CaptureLLM()
     runtime = AgentRuntime(
@@ -161,14 +150,13 @@ def test_agent_context_includes_search_parameter_guide():
         FakeMemory(chat),
         chat,
         FakeJobSeekTasks(),
-        FakeBossSearchOptions(),
     )
 
     assert asyncio.run(runtime.run("guide", "找工作")) == "ok"
     system_content = llm.messages[0]["content"]
-    assert '"search_parameter_guide"' in system_content
-    assert '"10-20K"' in system_content
-    assert "具体城市名称" in system_content
+    assert '"search_parameter_guide"' not in system_content
+    assert '"profile"' in system_content
+    assert '"job_seek_tasks"' in system_content
 
 
 def test_same_conversation_is_serialized():

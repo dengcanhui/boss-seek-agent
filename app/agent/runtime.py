@@ -8,7 +8,6 @@ from weakref import WeakValueDictionary
 from app.agent.memory.manager import MemoryManager
 from app.agent.prompts import SYSTEM_PROMPT
 from app.agent.tools.registry import ToolRegistry
-from app.application.search.boss_search_options import BossSearchOptionsService
 from app.application.search.job_seek_task_service import JobSeekTaskService
 from app.infrastructure.database.repositories.chat_repository import ChatRepository
 from app.infrastructure.llm import LLMClient
@@ -25,14 +24,12 @@ class AgentRuntime:
         memory: MemoryManager,
         chat_repository: ChatRepository,
         job_seek_task_service: JobSeekTaskService,
-        boss_search_options: BossSearchOptionsService,
     ):
         self.llm: LLMClient = llm
         self.registry: ToolRegistry = registry
         self.memory: MemoryManager = memory
         self.chat_repository: ChatRepository = chat_repository
         self.job_seek_task_service: JobSeekTaskService = job_seek_task_service
-        self.boss_search_options: BossSearchOptionsService = boss_search_options
         self._conversation_locks: WeakValueDictionary[str, asyncio.Lock] = WeakValueDictionary()
 
     def list_messages(self, conversation_id: str, limit: int = 100) -> list[dict[str, str]]:
@@ -59,7 +56,6 @@ class AgentRuntime:
         job_seek_tasks = self.job_seek_task_service.list_active_tasks(limit=50)
         context_text = json.dumps(
             {
-                "search_parameter_guide": self.boss_search_options.semantic_guide(),
                 "profile": memory["profile"].model_dump(),
                 "job_seek_tasks": [
                     task.model_dump(mode="json") for task in job_seek_tasks

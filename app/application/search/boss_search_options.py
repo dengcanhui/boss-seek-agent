@@ -11,7 +11,6 @@ BossOptions = dict[str, dict[str, str]]
 SearchOptionField = Literal["city", "industry"]
 OPTIONS_FILE = Path(__file__).resolve().parents[3] / "data" / "search_options.json"
 OPTION_FIELDS = ("city", "jobType", "salary", "experience", "degree", "industry", "scale", "stage")
-SMALL_OPTION_FIELDS = ("jobType", "salary", "experience", "degree", "scale", "stage")
 
 
 def load_search_options_data(path: Path = OPTIONS_FILE) -> dict[str, Any]:
@@ -80,38 +79,6 @@ class BossSearchOptionsService:
         if not isinstance(rows, list):
             return []
         return [row for row in rows if isinstance(row, dict)]
-
-    def semantic_guide(self) -> dict[str, Any]:
-        """返回适合放进模型上下文的小型语义说明，不包含完整城市/行业列表。"""
-        allowed_values = {
-            field: [
-                name
-                for name, code in self.options[field].items()
-                if code != "0"
-            ]
-            for field in SMALL_OPTION_FIELDS
-        }
-        return {
-            "field_rules": {
-                "query": "自由搜索关键词，例如 Agent开发、Python后端、大模型应用；不是 BOSS code。",
-                "city": "必须使用一个具体的 BOSS 城市名称；不能传省份、区域或 code。不确定名称时调用 search_boss_options(field='city', ...)。",
-                "jobType": "单选；只能使用 allowed_values.jobType 中的名称；用户未限制时传 null。",
-                "salary": "单选；只能使用 allowed_values.salary 中的薪资档位名称；不能自行创造薪资区间；用户未限制时传 null。",
-                "experience": "可多选；只能使用 allowed_values.experience 中的名称；无要求时传 [] 或 null。",
-                "degree": "可多选；只能使用 allowed_values.degree 中的名称；无要求时传 [] 或 null。",
-                "scale": "可多选；只能使用 allowed_values.scale 中的名称；无要求时传 [] 或 null。",
-                "stage": "可多选；只能使用 allowed_values.stage 中的名称；无要求时传 [] 或 null。",
-                "industry": "可多选；必须使用 BOSS 具体细分行业名称，不能传行业组名称或 code。不确定时调用 search_boss_options(field='industry', ...)。",
-                "priority": "整数，数值越小越优先；用户未要求时可不传。",
-            },
-            "allowed_values": allowed_values,
-            "important": [
-                "不要自行构造任何 BOSS code。",
-                "不要创造 allowed_values 中不存在的小型枚举值。",
-                "city 和 industry 不确定是否合法时，先调用 search_boss_options，再创建或修改任务。",
-                "搜索工具返回的 name 才是 city / industry 应写入任务的语义值。",
-            ],
-        }
 
     @agent_tool(
         name="search_boss_options",

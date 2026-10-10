@@ -7,6 +7,8 @@ import pytest
 from app.domain.global_config import GlobalConfig
 from app.execution.boss import locators
 from app.execution.boss.executor import BossJobExecutor
+from app.execution.filters.boss import BossJobFilter
+from app.execution.filters.boss import BossJobFilter
 from app.infrastructure.browser.ruyipage import RuyiPageBrowser
 
 
@@ -127,7 +129,7 @@ class FakeBrowser:
             return {
                 "code": 0,
                 "zpData": {
-                    "jobInfo": {"jobName": "Agent 开发", "invalidStatus": False},
+                    "jobInfo": {"jobName": "Agent 开发", "invalidStatus": False, "postDescription": "包含驻场要求"},
                     "relationInfo": {"interestJob": False, "beFriend": False},
                 },
             }
@@ -138,7 +140,14 @@ class FakeBrowser:
 
 def test_job_executor_starts_browser_once_before_page_operations():
     browser = FakeBrowser()
-    executor = BossJobExecutor(browser)
+    executor = BossJobExecutor(
+        browser,
+        global_config=SimpleNamespace(get=lambda: GlobalConfig(
+            ai_greeting_filter_enabled=False,
+            greet_wait_min_seconds=0,
+            greet_wait_max_seconds=0,
+        )),
+    )
     executor.MAX_STAGNANT_SCROLLS = 1
     executor.LOAD_MORE_SCROLL_TIMES = (3, 3)
     executor.LOAD_MORE_SCROLL_DELTA = (150, 150)
@@ -178,6 +187,7 @@ def test_job_executor_stops_at_global_max_jobs_per_task():
         def get(self):
             return GlobalConfig(
                 max_jobs_per_task=1,
+                ai_greeting_filter_enabled=False,
                 greet_wait_min_seconds=0,
                 greet_wait_max_seconds=0,
             )
@@ -222,7 +232,7 @@ def test_job_executor_saves_detail_and_marks_greeted():
     asyncio.run(
         executor._process_card(
             task,
-            GlobalConfig(greet_wait_min_seconds=0, greet_wait_max_seconds=0),
+            GlobalConfig(ai_greeting_filter_enabled=False, greet_wait_min_seconds=0, greet_wait_max_seconds=0),
             browser.cards[0],
             0,
         )
@@ -243,7 +253,7 @@ def test_job_executor_skips_locally_greeted_job():
     asyncio.run(
         executor._process_card(
             task,
-            GlobalConfig(greet_wait_min_seconds=0, greet_wait_max_seconds=0),
+            GlobalConfig(ai_greeting_filter_enabled=False, greet_wait_min_seconds=0, greet_wait_max_seconds=0),
             browser.cards[0],
             0,
         )
@@ -340,7 +350,7 @@ def test_job_executor_records_not_greeted_reason():
         executor._process_card(
             task,
             GlobalConfig(
-                job_blacklist=["Agent"],
+                description_blacklist=["驻场"],
                 greet_wait_min_seconds=0,
                 greet_wait_max_seconds=0,
             ),
@@ -349,33 +359,33 @@ def test_job_executor_records_not_greeted_reason():
         )
     )
 
-    assert records.not_greeted_reasons == ["职位命中黑名单：Agent"]
+    assert records.not_greeted_reasons == ["岗位描述命中黑名单：驻场"]
     assert not records.marked
 
 
 def test_job_executor_skips_already_contacted_job():
-    executor = BossJobExecutor(FakeBrowser())
+    job_filter = BossJobFilter()
 
-    assert executor._should_greet(
+    assert job_filter.check_detail_rules(
         {
             "code": 0,
             "zpData": {
                 "jobInfo": {"invalidStatus": False, "jobStatusDesc": "招聘中"},
                 "relationInfo": {"interestJob": True, "beFriend": False},
             },
-        }
-    ) is False
+        }, GlobalConfig()
+    ).passed is False
 
 
 def test_job_executor_accepts_open_uncontacted_job():
-    executor = BossJobExecutor(FakeBrowser())
+    job_filter = BossJobFilter()
 
-    assert executor._should_greet(
+    assert job_filter.check_detail_rules(
         {
             "code": 0,
             "zpData": {
                 "jobInfo": {"invalidStatus": False, "jobStatusDesc": "招聘中"},
                 "relationInfo": {"interestJob": False, "beFriend": False},
             },
-        }
-    ) is True
+        }, GlobalConfig()
+    ).passed is True

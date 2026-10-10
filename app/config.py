@@ -19,6 +19,11 @@ class Settings(BaseSettings):
     llm_base_url: str | None = None
     llm_model: str = "deepseek-flash"
 
+    # 本地 Ollama 岗位匹配决策（与主对话 LLM 独立）。
+    ollama_greeting_base_url: str = "http://127.0.0.1:11434"
+    ollama_greeting_model: str = "tev1:4b"
+    ollama_greeting_timeout_seconds: float = 30.0
+
     # 后台任务是否随应用启动自动运行。
     worker_autostart: bool = False
 

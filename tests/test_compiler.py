@@ -1,8 +1,28 @@
 import pytest
+from pydantic import ValidationError
 
 from app.application.search.boss_search_config_compiler import BossSearchConfigCompiler
 from app.application.search.boss_search_options import load_boss_options
 from app.domain.search.models import BossSearchConfig, JobSeekTaskParams
+
+
+def test_small_boss_options_are_validated_by_pydantic():
+    with pytest.raises(ValidationError, match="salary"):
+        JobSeekTaskParams(salary="15-25K")
+
+    with pytest.raises(ValidationError, match="experience"):
+        JobSeekTaskParams(experience=["1-3年", "虚构经验"])
+
+    with pytest.raises(ValidationError, match="jobType"):
+        JobSeekTaskParams(jobType="1901")
+
+    # 城市和行业仍是语义名称，由 Compiler 和选项表做合法性校验。
+    params = JobSeekTaskParams(
+        jobType="全职", salary="10-20K",
+        experience=["1-3年", "3-5年"], degree=["本科", "硕士"],
+        scale=["100-499人"], stage=["未融资"],
+    )
+    assert params.model_dump(exclude_none=True)["salary"] == "10-20K"
 
 
 def test_compile_human_values():

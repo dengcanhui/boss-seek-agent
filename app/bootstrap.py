@@ -11,6 +11,7 @@ from app.application.search.boss_search_options import BossSearchOptionsService
 from app.application.search.job_seek_task_service import JobSeekTaskService
 from app.config import settings
 from app.execution.boss.executor import BossJobExecutor
+from app.execution.filters.boss import BossJobFilter
 from app.execution.worker import JobSeekWorker
 from app.infrastructure.browser.ruyipage import RuyiPageBrowser
 from app.infrastructure.database.database import SessionLocal
@@ -20,6 +21,7 @@ from app.infrastructure.database.repositories.job_record_repository import JobRe
 from app.infrastructure.database.repositories.job_seek_task_repository import JobSeekTaskRepository
 from app.infrastructure.database.repositories.profile_repository import CandidateProfileRepository
 from app.infrastructure.llm import LLMClient
+from app.infrastructure.llm.ollama_decision_client import OllamaDecisionClient
 
 
 class Container:
@@ -40,6 +42,15 @@ class Container:
         )
         self.profile: CandidateProfileService = CandidateProfileService(self.profile_repository)
         self.global_config: GlobalConfigService = GlobalConfigService(self.global_config_repository)
+        self.ollama_decision_client: OllamaDecisionClient = OllamaDecisionClient(
+            model=settings.ollama_greeting_model,
+            base_url=settings.ollama_greeting_base_url,
+            timeout_seconds=settings.ollama_greeting_timeout_seconds,
+        )
+        self.boss_job_filter: BossJobFilter = BossJobFilter(
+            self.profile,
+            self.ollama_decision_client,
+        )
 
         self.registry: ToolRegistry = ToolRegistry()
         self.registry.register_service(self.job_seek_tasks)
@@ -64,6 +75,7 @@ class Container:
             self.browser,
             self.global_config,
             self.job_record_repository,
+            self.boss_job_filter,
         )
         self.job_seek_worker: JobSeekWorker = JobSeekWorker(
             self.job_seek_task_repository,
@@ -94,16 +106,15 @@ class Container:
                 self.memory,
                 self.chat_repository,
                 self.job_seek_tasks,
-                self.boss_search_options,
             )
         return self._agent
 
     async def close_llm(self) -> None:
-        if self._llm is None:
-            return
-        await self._llm.aclose()
-        self._llm = None
-        self._agent = None
+        if self._llm is not None:
+            await self._llm.aclose()
+            self._llm = None
+            self._agent = None
+        await self.ollama_decision_client.aclose()
 
 
 container = Container()

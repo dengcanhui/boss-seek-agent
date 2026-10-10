@@ -1,9 +1,30 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 from .enums import JobSeekTaskStatus
+
+
+# 以下值直接进入 Tool Calling 的 JSON Schema（语义名称，不是 BOSS code）。
+# code 的映射依旧由 BossSearchConfigCompiler 从 data/search_options.json 读取。
+JobTypeName = Literal["不限", "全职", "兼职"]
+SalaryName = Literal["不限", "3K以下", "3-5K", "5-10K", "10-20K", "20-50K", "50K以上"]
+ExperienceName = Literal[
+    "不限", "在校生", "应届生", "经验不限",
+    "1年以内", "1-3年", "3-5年", "5-10年", "10年以上",
+]
+DegreeName = Literal["不限", "初中及以下", "中专/中技", "高中", "大专", "本科", "硕士", "博士"]
+ScaleName = Literal[
+    "不限", "0-20人", "20-99人", "100-499人",
+    "500-999人", "1000-9999人", "10000人以上",
+]
+StageName = Literal[
+    "不限", "未融资", "天使轮", "A轮", "B轮",
+    "C轮", "D轮及以上", "已上市", "不需要融资",
+]
 
 
 class BossSearchConfig(BaseModel):
@@ -30,49 +51,62 @@ class BossSearchConfig(BaseModel):
 
 
 class JobSeekTaskParams(BaseModel):
-    """创建和修改求职任务共用的语义参数。None 表示未提供该字段。"""
+    """创建/修改搜索任务的语义参数。
+
+    枚举使用 BOSS 选项的中文名称；None 表示未提供该条件。
+    对修改任务而言，显式 null / [] / "不限" 可用于取消筛选。
+    城市和行业选项较多，仍通过 search_boss_options 查询。
+    """
 
     query: str | None = Field(
         default=None,
-        description="BOSS 搜索关键词，自由文本，例如 Agent开发、Python后端；不要填写 BOSS code。",
+        description="BOSS 搜索关键词，自由文本，例如Agent开发、Python后端；不传BOSS code。",
     )
     city: str | None = Field(
         default=None,
-        description="具体城市语义名称，例如 杭州；不能填写省份、地区概念或 BOSS code，不确定时先调用 search_boss_options。",
+        description=(
+            "具体城市名称，例如杭州；不能填写省份、地区概念或BOSS code。"
+            "不确定是否合法或需要查询地区时，调用 search_boss_options(field='city', keyword=...)，"
+            "再使用返回的name。"
+        ),
     )
-    jobType: str | None = Field(
+    jobType: JobTypeName | None = Field(
         default=None,
-        description="求职类型单选，只能使用当前 search_parameter_guide.allowed_values.jobType；无要求时为 null。",
+        description="求职类型，单选；无要求可省略或填null，修改时也可以填'不限'清空。",
     )
-    salary: str | None = Field(
+    salary: SalaryName | None = Field(
         default=None,
-        description="薪资档位单选，只能使用当前 search_parameter_guide.allowed_values.salary；不要自行创造薪资区间，无要求时为 null。",
+        description="BOSS 薪资档位，单选；必须选枚举里的完整区间名称，不能编造区间。无要求填null或'不限'。",
     )
-    experience: list[str] | None = Field(
+    experience: list[ExperienceName] | None = Field(
         default=None,
-        description="工作经验可多选，只能使用当前 search_parameter_guide.allowed_values.experience 中的语义名称。",
+        description="工作经验筛选，可多选枚举中的中文名称。无要求填null或空列表；'经验不限'是平台的可选档位。",
     )
-    degree: list[str] | None = Field(
+    degree: list[DegreeName] | None = Field(
         default=None,
-        description="学历可多选，只能使用当前 search_parameter_guide.allowed_values.degree 中的语义名称。",
+        description="学历筛选，可多选枚举中的中文名称。无要求填null或空列表。",
     )
     industry: list[str] | None = Field(
         default=None,
-        description="具体细分行业名称，可多选；不能填写行业组或 BOSS code，不确定时先调用 search_boss_options。",
+        description=(
+            "具体细分行业名称，可多选；不能填写行业组或BOSS code。"
+            "不确定时调用 search_boss_options(field='industry', keyword=...)，"
+            "然后使用返回的name；无要求填null或空列表。"
+        ),
     )
-    scale: list[str] | None = Field(
+    scale: list[ScaleName] | None = Field(
         default=None,
-        description="公司规模可多选，只能使用当前 search_parameter_guide.allowed_values.scale 中的语义名称。",
+        description="公司规模筛选，可多选枚举里的中文名称；无要求填null或空列表。",
     )
-    stage: list[str] | None = Field(
+    stage: list[StageName] | None = Field(
         default=None,
-        description="融资阶段可多选，只能使用当前 search_parameter_guide.allowed_values.stage 中的语义名称。",
+        description="公司融资阶段筛选，可多选枚举里的中文名称；无要求填null或空列表。",
     )
     priority: int | None = Field(
         default=None,
         ge=-1000,
         le=1000,
-        description="任务优先级，数字越小越优先；用户未指定时可不传。",
+        description="任务优先级，数字越小越优先执行；用户未指定时可不传。",
     )
 
 

@@ -20,6 +20,7 @@ export async function loadGlobalConfig() {
   byId("greet_wait_min").value = config.greet_wait_min_seconds ?? 8;
   byId("greet_wait_max").value = config.greet_wait_max_seconds ?? 15;
   byId("filter_inactive_over_week").checked = config.filter_inactive_over_week !== false;
+  byId("ai_greeting_filter_enabled").checked = config.ai_greeting_filter_enabled !== false;
 }
 
 export async function saveGlobalConfig() {
@@ -45,6 +46,7 @@ export async function saveGlobalConfig() {
       greet_wait_min_seconds: minWait,
       greet_wait_max_seconds: maxWait,
       filter_inactive_over_week: byId("filter_inactive_over_week").checked,
+      ai_greeting_filter_enabled: byId("ai_greeting_filter_enabled").checked,
     },
   });
 

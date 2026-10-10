@@ -66,7 +66,9 @@ Pytest 的临时目录已固定到项目 `runtime/pytest`，避免 Windows 用�
 - `JobSeekWorker` 顺序领取 `pending` 任务并维护任务状态。
 - `BossJobExecutor` 负责搜索、岗位遍历、详情抓取、过滤和打招呼。
 - `RuyiPageBrowser` 只封装浏览器运行时、持久化 profile 和基础页面操作。
-- `CandidateProfile` 是 Agent 内部长期记忆，不提供用户直接编辑的 HTTP 页面/API。
+- `CandidateProfile` 是 Agent 内部长期记忆，不提供用户直接编辑的 HTTP 页面/API；其字段说明通过 Pydantic JSON Schema 传给大模型。
+- `CandidateProfile.job_preferences.required` 保存必须满足的长期岗位要求（如必须双休），`preferred` 保存软性偏好；更新时支持嵌套增量合并。
+- `BossJobFilter` 先执行详情规则，再通过 Ollama 校验用户硬性岗位要求（不满足或信息未知时不自动打招呼）和岗位技能/职业方向；软性偏好不直接否决。
 
 ## 搜索参数
 
@@ -88,7 +90,7 @@ stage
 
 所有搜索选项统一来自 `data/search_options.json`。当前数据包含完整城市和细分行业，以及求职类型、薪资、经验、学历、规模和融资阶段等 BOSS 真实语义选项。
 
-Agent 不接收 374 个城市和 146 个行业的完整列表。每轮上下文只注入较小的固定枚举（`jobType`、`salary`、`experience`、`degree`、`scale`、`stage`）及字段规则；城市或行业不确定时，通过 `search_boss_options` Tool 查询合法语义名称。Compiler、前端 Options API 和 Agent 共用同一份数据源。
+Agent 不接收 374 个城市和 146 个行业的完整列表。小型固定枚举（`jobType`、`salary`、`experience`、`degree`、`scale`、`stage`）已写入 `JobSeekTaskParams` 的 Pydantic `Literal`，直接通过 Tool Calling 的 JSON Schema 传给大模型，不再每轮重复注入 `semantic_guide`。城市或行业不确定时，通过 `search_boss_options` Tool 查询合法语义名称。中文名称到 BOSS code 仍由 Compiler 根据 `data/search_options.json` 解析；相关测试保证小型枚举与选项表保持一致。
 
 ## 任务执行
 

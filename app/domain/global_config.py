@@ -36,6 +36,8 @@ class GlobalConfig(BaseModel):
     greet_wait_max_seconds: float = Field(default=15.0, ge=0, le=3600)
     # 是否过滤活跃时间中出现“周 / 月 / 年”等长期不活跃特征的岗位。
     filter_inactive_over_week: bool = True
+    # 在规则过滤通过后，用本地 Ollama 再判断是否值得打招呼。
+    ai_greeting_filter_enabled: bool = True
 
     @field_validator(
         "company_blacklist",
@@ -67,6 +69,7 @@ class GlobalConfigUpdate(BaseModel):
     greet_wait_min_seconds: float | None = Field(default=None, ge=0, le=3600)
     greet_wait_max_seconds: float | None = Field(default=None, ge=0, le=3600)
     filter_inactive_over_week: bool | None = None
+    ai_greeting_filter_enabled: bool | None = None
 
     @field_validator(
         "company_blacklist",

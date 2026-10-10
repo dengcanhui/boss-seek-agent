@@ -6,16 +6,29 @@ from app.application.search.boss_search_config_compiler import BossSearchConfigC
 from app.application.search.job_seek_task_service import JobSeekTaskService
 
 
-def test_semantic_guide_contains_small_enums_only():
-    service = BossSearchOptionsService()
-    guide = service.semantic_guide()
+def _enum_from_schema(property_schema: dict) -> list[str]:
+    """Schema 中允许 None 的单选和多选取其字符串枚举。"""
+    variants = property_schema.get("anyOf", [property_schema])
+    for variant in variants:
+        if "enum" in variant:
+            return variant["enum"]
+        if "items" in variant and "enum" in variant["items"]:
+            return variant["items"]["enum"]
+    raise AssertionError(f"没有合法的枚举选项：{property_schema}")
 
-    assert guide["allowed_values"]["jobType"] == ["全职", "兼职"]
-    assert "10-20K" in guide["allowed_values"]["salary"]
-    assert "经验不限" in guide["allowed_values"]["experience"]
-    assert "本科" in guide["allowed_values"]["degree"]
-    assert "city" not in guide["allowed_values"]
-    assert "industry" not in guide["allowed_values"]
+
+def test_task_param_schema_enumerations_match_boss_options():
+    from app.domain.search.models import JobSeekTaskParams
+
+    options = BossSearchOptionsService().options
+    schema = JobSeekTaskParams.model_json_schema()["properties"]
+    for field in ("jobType", "salary", "experience", "degree", "scale", "stage"):
+        assert _enum_from_schema(schema[field]) == list(options[field])
+        assert "description" in schema[field]
+
+    # 两个大字段继续使用按需查询工具，不展开所有城市/细分行业选项。
+    assert "enum" not in schema["city"]
+    assert "enum" not in schema["industry"]
 
 
 def test_search_city_returns_semantic_name_without_code():
@@ -76,5 +89,17 @@ def test_task_tool_schema_explains_semantic_parameter_rules():
     params_schema = schema["$defs"]["JobSeekTaskParams"]["properties"]
 
     assert "search_boss_options" in params_schema["city"]["description"]
-    assert "allowed_values.salary" in params_schema["salary"]["description"]
+    assert _enum_from_schema(params_schema["salary"]) == list(options_service.options["salary"])
     assert "细分行业" in params_schema["industry"]["description"]
+    assert _enum_from_schema(params_schema["experience"]) == list(options_service.options["experience"])
+    assert _enum_from_schema(params_schema["jobType"]) == list(options_service.options["jobType"])
+
+    # 修改任务的 changes 也必须暴露同一份枚举约束。
+    update_schema = next(
+        item["function"]["parameters"]
+        for item in registry.schemas()
+        if item["function"]["name"] == "update_task"
+    )
+    update_params = update_schema["$defs"]["JobSeekTaskParams"]["properties"]
+    assert _enum_from_schema(update_params["salary"]) == list(options_service.options["salary"])
+    assert _enum_from_schema(update_params["stage"]) == list(options_service.options["stage"])

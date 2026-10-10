@@ -14,6 +14,8 @@ from app.infrastructure.browser.ruyipage import RuyiPageBrowser
 from app.infrastructure.database.repositories.job_record_repository import JobRecordRepository
 
 from . import locators
+from app.execution.filters.base import BaseJobFilter
+from app.execution.filters.boss import BossJobFilter
 
 logger = logging.getLogger("uvicorn.error.boss")
 
@@ -24,6 +26,8 @@ class JobWalkStats:
 
     # 已读取过的岗位卡片数量。
     visited: int = 0
+    # 已尝试获取详情的数量（卡片阶段过滤不计入）。
+    detail_requested: int = 0
     # 成功加载岗位详情的数量。
     detail_loaded: int = 0
     # 已完成完整处理流程的岗位数量。
@@ -41,7 +45,7 @@ class BossJobExecutor:
 
     执行顺序固定为：
     搜索页加载 -> 逐个读取岗位卡片 -> 将当前岗位滚入视野 -> 卡片级过滤 ->
-    点击岗位并等待详情接口 -> 详情判断 -> 打招呼 -> 小幅下滚 -> 处理下一个岗位。
+    点击岗位并等待详情接口 -> 规则过滤 -> Ollama 决策 -> 打招呼 -> 处理下一个岗位。
     只有走到当前已加载列表尾部时，才额外等待下一批岗位加载。
 
     页面结构相关内容统一放在 ``locators.py``。详情数据优先读取 BOSS 自己的
@@ -69,10 +73,12 @@ class BossJobExecutor:
         browser: RuyiPageBrowser,
         global_config: GlobalConfigService | None = None,
         job_records: JobRecordRepository | None = None,
+        job_filter: BaseJobFilter | None = None,
     ):
         self.browser: RuyiPageBrowser = browser
         self.global_config: GlobalConfigService | None = global_config
         self.job_records: JobRecordRepository | None = job_records
+        self.job_filter: BaseJobFilter = job_filter or BossJobFilter()
 
     def build_search_url(self, job_seek_task: JobSeekTask) -> str:
         config = job_seek_task.config
@@ -134,7 +140,7 @@ class BossJobExecutor:
             stats.greeted,
             stats.errors,
         )
-        if stats.visited > 0 and stats.detail_loaded == 0:
+        if stats.detail_requested > 0 and stats.detail_loaded == 0:
             raise RuntimeError(
                 f"遍历了 {stats.visited} 个岗位，但没有成功获取任何岗位详情，请检查页面或接口是否变化。"
             )
@@ -168,7 +174,7 @@ class BossJobExecutor:
         config: GlobalConfig,
     ) -> JobWalkStats:
         """逐个浏览岗位并渐进滚动，返回本轮执行统计。"""
-        next_index = 1
+        next_index = 0
         stagnant_scrolls = 0
         stats = JobWalkStats()
 
@@ -248,7 +254,19 @@ class BossJobExecutor:
             card_text = await self.browser.element_text(card)
             preview = " ".join(card_text.split())[:120]
             logger.info("[boss] 岗位 #%s 卡片内容=%s", index + 1, preview)
-            logger.info("[boss] 岗位 #%s 点击并等待详情接口", index + 1)
+            card_result = self.job_filter.check_card(card_text, config)
+            if not card_result.passed:
+                stats.handled += 1
+                stats.skipped += 1
+                logger.info(
+                    "[boss] 岗位 #%s 卡片过滤=跳过 reason=%s",
+                    index + 1,
+                    card_result.reason,
+                )
+                return
+
+            logger.info("[boss] 岗位 #%s 卡片过滤通过，点击并等待详情接口", index + 1)
+            stats.detail_requested += 1
             detail = await self._load_detail(card)
             if detail is None:
                 stats.errors += 1
@@ -273,16 +291,19 @@ class BossJobExecutor:
                     logger.info("[boss] 岗位 #%s 本地历史已打过招呼，跳过", index + 1)
                     return
 
-            not_greeted_reason = self._not_greeted_reason(detail, config)
-            if not_greeted_reason is not None:
+            search_keyword = getattr(getattr(job_seek_task, "config", None), "query", "")
+            result = await self.job_filter.check_detail(
+                detail, config, search_keyword=search_keyword,
+            )
+            if not result.passed:
                 if self.job_records is not None:
-                    self.job_records.mark_not_greeted(detail, not_greeted_reason)
+                    self.job_records.mark_not_greeted(detail, result.reason)
                 stats.handled += 1
                 stats.skipped += 1
                 logger.info(
-                    "[boss] 岗位 #%s 详情判断结果=跳过 reason=%s",
+                    "[boss] 岗位 #%s 详情过滤=跳过 reason=%s",
                     index + 1,
-                    not_greeted_reason,
+                    result.reason,
                 )
                 return
 
@@ -312,66 +333,6 @@ class BossJobExecutor:
         logger.info("[boss] 岗位详情接口获取成功")
         return payload
 
-    def _not_greeted_reason(
-        self,
-        detail: dict[str, Any],
-        config: GlobalConfig | None = None,
-    ) -> str | None:
-        """返回不打招呼的具体原因；返回 ``None`` 表示可以打招呼。"""
-        config = config or GlobalConfig()
-        data = detail.get("zpData")
-        if not isinstance(data, dict):
-            return "岗位详情数据异常：缺少 zpData"
-
-        job_info = data.get("jobInfo") or {}
-        if not isinstance(job_info, dict):
-            return "岗位详情数据异常：缺少 jobInfo"
-
-        job_name = str(job_info.get("jobName") or "")
-        if job_info.get("invalidStatus") is True:
-            return "岗位已失效"
-
-        status = str(job_info.get("jobStatusDesc") or "")
-        if "停止" in status:
-            return f"岗位状态不允许沟通：{status}"
-
-        keyword = self._match_keyword(job_name, config.job_blacklist)
-        if keyword:
-            return f"职位命中黑名单：{keyword}"
-
-        brand_info = data.get("brandComInfo") or {}
-        brand_name = brand_info.get("brandName", "") if isinstance(brand_info, dict) else ""
-        keyword = self._match_keyword(str(brand_name), config.company_blacklist)
-        if keyword:
-            return f"公司命中黑名单：{keyword}"
-
-        description = str(job_info.get("postDescription") or "")
-        keyword = self._match_keyword(description, config.description_blacklist)
-        if keyword:
-            return f"岗位描述命中黑名单：{keyword}"
-
-        boss_info = data.get("bossInfo") or {}
-        active_desc = str(boss_info.get("activeTimeDesc") or "") if isinstance(boss_info, dict) else ""
-        if config.filter_inactive_over_week and any(unit in active_desc for unit in ("周", "月", "年")):
-            return f"招聘者长期不活跃：{active_desc}"
-
-        relation = data.get("relationInfo") or {}
-        if isinstance(relation, dict) and (
-            relation.get("interestJob") is True or relation.get("beFriend") is True
-        ):
-            return "已经与该岗位建立沟通关系"
-
-        logger.info("[boss] 详情判断：岗位可以打招呼 job=%s", job_name)
-        return None
-
-    def _should_greet(
-        self,
-        detail: dict[str, Any],
-        config: GlobalConfig | None = None,
-    ) -> bool:
-        """兼容布尔判断；具体原因由 ``_not_greeted_reason`` 提供。"""
-        return self._not_greeted_reason(detail, config) is None
-
     async def _greet(self, detail: dict[str, Any], config: GlobalConfig) -> None:
         """点击打招呼入口，并关闭随后出现的沟通弹窗。"""
         job_name = detail.get("zpData", {}).get("jobInfo", {}).get("jobName", "")
@@ -400,15 +361,6 @@ class BossJobExecutor:
             "打招呼后等待",
             (config.greet_wait_min_seconds, config.greet_wait_max_seconds),
         )
-
-    @staticmethod
-    def _match_keyword(text: str, keywords: list[str]) -> str | None:
-        normalized = text.casefold()
-        for keyword in keywords:
-            candidate = keyword.strip()
-            if candidate and candidate.casefold() in normalized:
-                return candidate
-        return None
 
     async def _random_action_delay(
         self,
