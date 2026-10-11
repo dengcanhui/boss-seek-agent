@@ -26,21 +26,6 @@ def detail_payload(description="Python Agent 与 RAG 开发"):
 
 
 
-def _preference_payload(choice: str, met: float) -> dict:
-    return {
-        "answers": {
-            "preference": {
-                "choice": choice,
-                "probabilities": {
-                    "met": met,
-                    "unmet": (1 - met) if choice == "unmet" else 0.02,
-                    "unknown": (1 - met) if choice == "unknown" else (0.98 - met if choice == "met" else 0.0),
-                },
-            }
-        }
-    }
-
-
 def _profile_with_required(*requirements: str, preferred: list[str] | None = None):
     from app.domain.candidate.models import CandidateProfile, JobPreferences
     return CandidateProfile(
@@ -50,52 +35,62 @@ def _profile_with_required(*requirements: str, preferred: list[str] | None = Non
     )
 
 
-def test_required_job_preference_passes_only_when_explicitly_met():
+def test_missing_rest_or_interview_information_does_not_block():
     from tests.test_ollama_greeting_filter import decision_payload
-    model = SimpleNamespace(evaluate=AsyncMock(side_effect=[
-        _preference_payload("met", 0.95),
-        decision_payload(),
-    ]))
-    profile = _profile_with_required("必须双休", preferred=["少加班"])
+    model = SimpleNamespace(evaluate=AsyncMock(return_value=decision_payload()))
+    profile = _profile_with_required(
+        "不接受单休", "不接受线下面试", preferred=["希望少加班"]
+    )
     f = BossJobFilter(SimpleNamespace(get_profile=lambda: profile), model)
 
     result = asyncio.run(
-        f.check_detail(detail_payload("周末双休，使用Python开发Agent"), GlobalConfig())
+        f.check_detail(detail_payload("使用Python开发Agent，负责RAG"), GlobalConfig())
     )
     assert result.passed
-    assert model.evaluate.await_count == 2
-    first_request = model.evaluate.call_args_list[0].kwargs
-    assert list(first_request["questions"]) == ["preference"]
-    assert "必须双休" in first_request["questions"]["preference"]["instructions"]
-    assert "周末双休" in first_request["state"]["job"]["description"]
+    model.evaluate.assert_awaited_once()
+    request = model.evaluate.call_args.kwargs
+    assert set(request["questions"]) == {"core_skill", "hard_conflict"}
+    assert request["state"]["candidate"]["job_preferences"] == {
+        "required": ["不接受单休", "不接受线下面试"]
+    }
+    assert "希望少加班" not in str(request["state"])
+    assert "未提及休息制度" in request["questions"]["hard_conflict"]["instructions"]
 
 
-def test_required_job_preference_rejects_unmet_unknown_and_low_confidence():
-    for choice, met_prob in [
-        ("unmet", 0.02),
-        ("unknown", 0.02),
-        ("met", 0.53),
-    ]:
-        model = SimpleNamespace(evaluate=AsyncMock(return_value=_preference_payload(choice, met_prob)))
-        f = BossJobFilter(
-            SimpleNamespace(get_profile=lambda: _profile_with_required("必须双休")),
-            model,
-        )
-        result = asyncio.run(f.check_detail(detail_payload("未说明休息安排"), GlobalConfig()))
+def test_explicit_hard_conflicts_are_rejected_in_same_model_request():
+    from tests.test_ollama_greeting_filter import decision_payload
+    cases = (
+        ("明确单休，Python Agent研发", ["不接受单休"]),
+        ("必须到现场线下面试，Python Agent研发", ["不接受线下面试"]),
+        ("学历要求硕士研究生及以上，Python Agent研发", []),
+        ("明确5年以上工作经验，Python Agent研发", []),
+    )
+    for description, required in cases:
+        model = SimpleNamespace(evaluate=AsyncMock(return_value=decision_payload(
+            hard_choice="conflict", hard_conflict=0.96,
+        )))
+        profile = _profile_with_required(*required)
+        profile.degree = "本科"
+        profile.experience_years = 3
+        f = BossJobFilter(SimpleNamespace(get_profile=lambda: profile), model)
+        result = asyncio.run(f.check_detail(detail_payload(description), GlobalConfig()))
         assert not result.passed
-        assert "必须双休" in result.reason
-        assert model.evaluate.await_count == 1  # 未通过偏好时不继续技能模型
+        assert "明确硬性条件冲突" in result.reason
+        model.evaluate.assert_awaited_once()
+        request = model.evaluate.call_args.kwargs
+        assert request["state"]["job"]["description"] == description
+        assert request["state"]["candidate"]["degree"] == "本科"
+        assert request["state"]["candidate"]["experience_years"] == 3
 
 
-def test_disabling_model_does_not_silently_ignore_required_preferences():
+def test_disabling_ai_filter_skips_only_model_filter():
     model = SimpleNamespace(evaluate=AsyncMock())
     profile = _profile_with_required("不接受出差")
     f = BossJobFilter(SimpleNamespace(get_profile=lambda: profile), model)
     result = asyncio.run(
         f.check_detail(detail_payload("Agent开发"), GlobalConfig(ai_greeting_filter_enabled=False))
     )
-    assert not result.passed
-    assert "尚未核实" in result.reason
+    assert result.passed
     model.evaluate.assert_not_awaited()
 
 

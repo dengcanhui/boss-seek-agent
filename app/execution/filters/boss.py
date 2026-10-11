@@ -26,45 +26,48 @@ class DecisionModelClient(Protocol):
 class BossJobFilter(BaseJobFilter):
     """统一管理 BOSS 岗位的卡片预过滤、详情规则和模型判断。"""
 
-    # 初始采用偏保守的阈值，避免低概率的第一名直接触发打招呼。
-    # System One 输入有 token 上限，截取首尾以尽量保留职责与任职要求。
+    # 保留 JD 开头与结尾的职责、任职要求，避免超过 System One token 限制。
     MAX_DESCRIPTION_CHARS = 1800
-    MIN_SKILL_MATCH_PROB = 0.55
-    MIN_CAREER_ALIGNED_PROB = 0.65
-    # 只在存在高置信度、可证实的硬门槛冲突时拒绝。
-    MIN_HARD_CONFLICT_PROB = 0.70
+    # 模型对硬性冲突不够确定时，避免仅凭猜测错过岗位。
+    MIN_CONFIRMED_CONFLICT_PROB = 0.80
 
     QUESTIONS: dict[str, dict[str, Any]] = {
         "core_skill": {
             "type": "choice",
-            "instructions": "候选人现有核心技术栈与该岗位实际主要工作内容有多大匹配度？按实际技术要求判断，不要仅凭职位名称。",
+            "instructions": (
+                "判断候选人现有技术背景与岗位实际主要工作内容是否有重大差距。"
+                "匹配不等于精通每项技术，部分技能缺失、对框架不熟悉、经验略有不足可以接受。"
+                "必须以详细岗位职责为主，岗位标题和技术关键词不能替代实际工作内容。"
+                "先判断岗位主要任务是否涉及软件研发、代码实现或技术系统建设。"
+                "如果职责明确以电话销售、客户开发、商务招商、非技术运营、硬件研发等为主，"
+                "即使岗位标题含Python/Agent/AI开发、出现技术名词，也必须选 major_gap。"
+                "例如岗位标题为Python Agent开发，正文却写主要工作是电话销售AI产品、无需写代码，"
+                "必须判为 major_gap，而不是 acceptable。"
+                "主要研发技术栈完全不同且难以胜任，也选择 major_gap。"
+                "岗位属于相关开发方向但技术细节不全时默认 acceptable。"
+            ),
             "criteria": {
-                "match": "候选人具备岗位主要核心技能，现有经验能够直接用于该工作",
-                "gap": "岗位主要技能与候选人技术栈有明显差距，需要较大跨度转型",
-                "unknown": "岗位或候选人提供的技术信息不足，无法判断",
+                "acceptable": "主要工作与候选人的现有技术或目标研发方向大体相关，允许部分技能差距与信息缺失",
+                "major_gap": "主要职责不是相关软件研发工作，或主要技术跨度过大难以胜任；标题技术词不构成匹配",
             },
         },
         "hard_conflict": {
             "type": "choice",
             "instructions": (
-                "只判断岗位明示的【硬性要求】与候选人画像中【明确已知事实】是否存在直接矛盾。"
-                "例如岗位要求硕士而只有本科，岗位要求5年以上总工作经验而候选人只有3年。"
-                "年龄或专业未提供、未写某技能或专项项目经历、没有写证书，均不能视为已证实不具备。"
-                "写着优先的要求不算硬性门槛。"
-                "需要存在确切矛盾才选择 conflict，否则选择 no_proven_conflict，不等于确认完全符合。"
+                "只判断岗位明确的必须条件是否与候选人画像的已知事实、明确不能接受的事项直接冲突。"
+                "例如：岗位要求硕士而候选人是本科；要求5年以上总经验但候选人只有3年；"
+                "明确写单休而用户不接受单休；明确要求线下面试而用户拒绝现场面试。"
+                "只在招聘文本存在明确相反证据时选择 conflict。"
+                "未提及休息制度、面试方式、加班或出差等，一律选 no_proven_conflict，默认放行；"
+                "即使用户说必须双休，JD 未提及也不能算冲突。"
+                "优先条件不是必须条件；画像未提供年龄、专业、证书或某项技能，"
+                "绝不能当成已知不符合。例如岗位写30岁以下但画像没有年龄，不存在明确冲突。"
+                "3年经验与岗位写3年以上不构成已证实的直接矛盾；5年以上与已知3年则明确冲突。"
+                "不要根据岗位名称或公司行业等猜测隐含条件。"
             ),
             "criteria": {
-                "conflict": "岗位的必须条件与画像已知事实存在直接冲突，有证据证明不满足",
-                "no_proven_conflict": "未发现有证据的直接冲突；可能完全满足，也可能还有未确认条件",
-            },
-        },
-        "career_direction": {
-            "type": "choice",
-            "instructions": "岗位实际工作职责是否符合候选人的长期目标岗位方向？",
-            "criteria": {
-                "aligned": "工作内容属于候选人期望的长期职业方向",
-                "misaligned": "工作内容与目标方向明显不一致",
-                "unknown": "无法从岗位描述判断职业方向",
+                "conflict": "岗位明确的必须条件与候选人的已知事实或不可接受事项有直接矛盾",
+                "no_proven_conflict": "没有明确冲突证据，包括未提及相关条件或尚未证实的条件",
             },
         },
     }
@@ -156,101 +159,17 @@ class BossJobFilter(BaseJobFilter):
         *,
         search_keyword: str = "",
     ) -> FilterResult:
-        """严格按 详情规则 -> Ollama 的顺序过滤。"""
+        """先执行明确规则；启用 AI 时仅做一次双维度岗位判断。"""
         result = self.check_detail_rules(detail, config)
         if not result.passed:
             return result
-        # 用户明确说“必须双休”等要求时，先确保岗位能证实满足。
-        profile = self.profile_service.get_profile() if self.profile_service else None
-        required = profile.job_preferences.required if profile else []
-        if required:
-            if not config.ai_greeting_filter_enabled or self.model_client is None:
-                return FilterResult.reject(
-                    "岗位硬性偏好尚未核实：AI 过滤已关闭或模型未配置，不能自动打招呼"
-                )
-            preference_result = await self.check_job_preferences(detail, required)
-            if not preference_result.passed:
-                return preference_result
-
         if not config.ai_greeting_filter_enabled:
             return FilterResult.allow()
-        return await self.check_model(detail, search_keyword=search_keyword, profile=profile)
-
-    async def check_job_preferences(
-        self,
-        detail: dict[str, Any],
-        requirements: list[str],
-    ) -> FilterResult:
-        """核实用户的每条硬性岗位要求。unknown 按未核实处理，不自动打招呼。
-
-        软性偏好不参与否决，避免“最好少加班”变成绝对限制。
-        """
-        if self.model_client is None:
-            return FilterResult.reject("岗位硬性偏好尚未核实：Ollama 未配置")
-        data = detail.get("zpData") or {}
-        job = data.get("jobInfo") or {}
-        for requirement in requirements:
-            question = {
-                "type": "choice",
-                "instructions": (
-                    "仅依据招聘岗位的文本，判断该岗位是否明确满足给定的用户硬性要求。"
-                    "禁止根据行业、公司名字、岗位名称猜测福利、工时或出差情况。"
-                    "要关注否定词，例如“不接受出差”对应的岗位要能确认无需出差。"
-                    "没有提及、不够具体或内容互相矛盾时选 unknown，绝不能默认为满足。"
-                    "这里的要求是：" + requirement
-                ),
-                "criteria": {
-                    "met": "岗位明确说明满足该要求，有对应事实",
-                    "unmet": "岗位明确说明与该要求冲突，如要求双休却写单休或大小周",
-                    "unknown": "岗位没有明确说明或无法从描述确认是否满足要求",
-                },
-            }
-            try:
-                response = await self.model_client.evaluate(
-                    state={
-                        "requirement": requirement,
-                        "job": self.compact_model_state({
-                            "job": {
-                                "title": job.get("jobName"),
-                                "description": str(job.get("postDescription") or ""),
-                            }
-                        })["job"],
-                    },
-                    questions={"preference": question},
-                )
-                answer = (response.get("answers") or {}).get("preference")
-                if not isinstance(answer, dict):
-                    raise ValueError("缺少 preference 回答")
-                choice = answer.get("choice")
-                probabilities = answer.get("probabilities")
-                if (
-                    choice not in {"met", "unmet", "unknown"}
-                    or not isinstance(probabilities, dict)
-                    or any(
-                        type(probabilities.get(key)) not in (int, float)
-                        or not 0 <= probabilities[key] <= 1
-                        for key in ("met", "unmet", "unknown")
-                    )
-                ):
-                    raise ValueError("preference 决策或概率不合法")
-                if choice != "met" or probabilities["met"] < 0.55:
-                    reason = {
-                        "unmet": "岗位明确不符合",
-                        "unknown": "岗位描述未能确认满足",
-                        "met": "满足证据置信度不足",
-                    }[choice]
-                    return FilterResult.reject(f"岗位硬性偏好未通过：{requirement}（{reason}）")
-            except Exception:
-                logger.exception("[boss] 岗位硬性偏好判断失败 requirement=%s", requirement)
-                return FilterResult.reject(f"岗位硬性偏好未核实：{requirement}（Ollama 调用失败）")
-        return FilterResult.allow()
+        return await self.check_model(detail, search_keyword=search_keyword)
 
     @classmethod
     def compact_model_state(cls, state: dict[str, Any]) -> dict[str, Any]:
-        """删除与三维匹配无关的画像字段并控制岗位描述长度。
-
-        这是模型输入的裁剪，不影响存储的岗位原始详情。
-        """
+        """仅保留技术背景、学历年限和明确拒绝的岗位条件，并裁剪超长 JD。"""
         candidate = state.get("candidate") or {}
         job = state.get("job") or {}
         description = str(job.get("description") or "")
@@ -260,11 +179,15 @@ class BossJobFilter(BaseJobFilter):
                 + "\n...（中间内容已省略）...\n"
                 + description[-800:].lstrip()
             )
+        preferences = candidate.get("job_preferences") or {}
         return {
             "candidate": {
-                key: candidate[key]
-                for key in ("expected_jobs", "skills", "experience_years", "degree")
-                if key in candidate
+                **{
+                    key: candidate[key]
+                    for key in ("expected_jobs", "skills", "experience_years", "degree")
+                    if key in candidate
+                },
+                "job_preferences": {"required": preferences.get("required") or []},
             },
             "search_keyword": state.get("search_keyword") or "",
             "job": {
@@ -285,9 +208,6 @@ class BossJobFilter(BaseJobFilter):
         data = data if isinstance(data, dict) else {}
         job = data.get("jobInfo")
         job = job if isinstance(job, dict) else {}
-        brand = data.get("brandComInfo")
-        brand = brand if isinstance(brand, dict) else {}
-
         try:
             if self.profile_service is None or self.model_client is None:
                 return FilterResult.reject("AI 过滤：模型或候选人画像未配置")
@@ -295,27 +215,14 @@ class BossJobFilter(BaseJobFilter):
             if not profile.expected_jobs and not profile.skills and not search_keyword:
                 return FilterResult.reject("AI 过滤：未提供求职方向或核心技能，无法判断匹配度")
 
-            candidate = profile.model_dump(
-                include={
-                    "expected_jobs",
-                    "expected_cities",
-                    "skills",
-                    "experience_years",
-                    "degree",
-                    "expected_salary",
-                    "company_preferences",
-                    "search_preferences",
-                },
-            )
             state = {
-                "candidate": candidate,
+                "candidate": profile.model_dump(
+                    include={"expected_jobs", "skills", "experience_years", "degree", "job_preferences"},
+                ),
                 "search_keyword": search_keyword,
                 "job": {
                     "title": job.get("jobName"),
-                    "company": brand.get("brandName"),
-                    "salary": job.get("salaryDesc") or job.get("salary"),
-                    "city": job.get("locationName") or job.get("jobArea"),
-                    "description": str(job.get("postDescription") or "")[:6000],
+                    "description": str(job.get("postDescription") or ""),
                 },
             }
             result = await self.model_client.evaluate(
@@ -336,14 +243,13 @@ class BossJobFilter(BaseJobFilter):
 
     @classmethod
     def parse_decision(cls, payload: dict[str, Any]) -> FilterResult:
-        """从 System One 的 answers 中读取选择及每个选项的概率。"""
+        """只判断技术差距是否过大、是否存在明确的硬性冲突。"""
         if not isinstance(payload, dict) or not isinstance(payload.get("answers"), dict):
             raise ValueError("System One 响应缺少 answers")
         answers = payload["answers"]
         expected_labels = {
-            "core_skill": {"match", "gap", "unknown"},
+            "core_skill": {"acceptable", "major_gap"},
             "hard_conflict": {"conflict", "no_proven_conflict"},
-            "career_direction": {"aligned", "misaligned", "unknown"},
         }
         choices: dict[str, str] = {}
         probabilities: dict[str, dict[str, float]] = {}
@@ -361,32 +267,21 @@ class BossJobFilter(BaseJobFilter):
             choices[name] = choice
             probabilities[name] = {key: float(probs[key]) for key in allowed}
 
-        match_prob = probabilities["core_skill"]["match"]
-        aligned_prob = probabilities["career_direction"]["aligned"]
         conflict_prob = probabilities["hard_conflict"]["conflict"]
-        approved = (
-            choices["core_skill"] == "match"
-            and match_prob >= cls.MIN_SKILL_MATCH_PROB
-            and choices["career_direction"] == "aligned"
-            and aligned_prob >= cls.MIN_CAREER_ALIGNED_PROB
-            and not (
-                choices["hard_conflict"] == "conflict"
-                and conflict_prob >= cls.MIN_HARD_CONFLICT_PROB
-            )
+        confirmed_conflict = (
+            choices["hard_conflict"] == "conflict"
+            and conflict_prob >= cls.MIN_CONFIRMED_CONFLICT_PROB
         )
-        skill_label = {"match": "匹配", "gap": "不匹配", "unknown": "无法判断"}[
-            choices["core_skill"]
-        ]
-        hard_label = {
-            "conflict": "疑似存在冲突",
-            "no_proven_conflict": "无已证实冲突",
-        }[choices["hard_conflict"]]
-        career_label = {"aligned": "一致", "misaligned": "不一致", "unknown": "无法判断"}[
-            choices["career_direction"]
-        ]
+        approved = choices["core_skill"] != "major_gap" and not confirmed_conflict
+        skill = "技术差距可接受" if choices["core_skill"] == "acceptable" else "核心技术差距过大"
+        if confirmed_conflict:
+            hard = "存在明确硬性条件冲突"
+        elif choices["hard_conflict"] == "conflict":
+            hard = "疑似冲突但证据不足，暂不否决"
+        else:
+            hard = "无明确硬性冲突"
         reason = (
-            f"核心技能：{skill_label}(匹配概率 {match_prob:.2f})，"
-            f"硬性要求：{hard_label}(冲突概率 {conflict_prob:.2f})，"
-            f"职业方向：{career_label}(一致概率 {aligned_prob:.2f})"
+            f"核心技术：{skill}；硬性条件：{hard}"
+            f"（冲突概率 {probabilities['hard_conflict']['conflict']:.2f}）"
         )
         return FilterResult(approved, "AI 过滤：" + ("通过；" if approved else "未通过；") + reason)

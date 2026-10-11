@@ -26,12 +26,10 @@ class FakeProfileService:
 
 def decision_payload(
     *,
-    skill_choice="match",
-    skill_match=0.68,
+    skill_choice="acceptable",
+    skill_acceptable=0.68,
     hard_choice="no_proven_conflict",
     hard_conflict=0.01,
-    career_choice="aligned",
-    career_aligned=0.86,
 ):
     return {
         "model": "tev1:4b",
@@ -40,9 +38,8 @@ def decision_payload(
                 "type": "choice",
                 "choice": skill_choice,
                 "probabilities": {
-                    "match": skill_match,
-                    "gap": 0.12,
-                    "unknown": 1 - skill_match - 0.12,
+                    "acceptable": skill_acceptable,
+                    "major_gap": 1 - skill_acceptable,
                 },
             },
             "hard_conflict": {
@@ -53,20 +50,11 @@ def decision_payload(
                     "no_proven_conflict": 1 - hard_conflict,
                 },
             },
-            "career_direction": {
-                "type": "choice",
-                "choice": career_choice,
-                "probabilities": {
-                    "aligned": career_aligned,
-                    "misaligned": 0.02,
-                    "unknown": 1 - career_aligned - 0.02,
-                },
-            },
         },
     }
 
 
-def test_model_input_removes_irrelevant_fields_and_keeps_long_description_ends():
+def test_model_input_keeps_hard_preferences_but_not_soft_preferences_and_trims_jd():
     description = "岗位职责：" + "A" * 1600 + "任职要求：" + "B" * 1300
     full = {
         "candidate": {
@@ -74,6 +62,10 @@ def test_model_input_removes_irrelevant_fields_and_keeps_long_description_ends()
             "skills": ["Python", "RAG"],
             "experience_years": 3,
             "degree": "本科",
+            "job_preferences": {
+                "required": ["不接受单休", "不接受线下面试"],
+                "preferred": ["希望少加班"],
+            },
             "expected_cities": ["杭州"],
             "search_preferences": {"city_tier": "新一线"},
         },
@@ -91,6 +83,7 @@ def test_model_input_removes_irrelevant_fields_and_keeps_long_description_ends()
         "skills": ["Python", "RAG"],
         "experience_years": 3,
         "degree": "本科",
+        "job_preferences": {"required": ["不接受单休", "不接受线下面试"]},
     }
     assert set(compact["job"]) == {"title", "description"}
     assert compact["job"]["description"].startswith("岗位职责：")
@@ -99,39 +92,41 @@ def test_model_input_removes_irrelevant_fields_and_keeps_long_description_ends()
     assert full["job"]["description"] == description
 
 
-def test_ollama_decision_accepts_confident_match_and_unknown_hard_requirements():
-    decision = BossJobFilter.parse_decision(
-        decision_payload(skill_match=0.586, hard_conflict=0.013, career_aligned=0.864)
+def test_ollama_decision_allows_related_skill_and_no_proven_conflict():
+    result = BossJobFilter.parse_decision(
+        decision_payload(skill_acceptable=0.56, hard_conflict=0.013)
     )
-    assert decision.passed is True
-    assert "冲突概率 0.01" in decision.reason
+    assert result.passed is True
+    assert "冲突概率 0.01" in result.reason
 
 
-def test_ollama_decision_rejects_skill_gap_or_hard_unmet():
-    decision = BossJobFilter.parse_decision(
-        decision_payload(skill_choice="gap")
+def test_ollama_decision_rejects_major_skill_gap_or_clear_hard_conflict():
+    gap = BossJobFilter.parse_decision(
+        decision_payload(skill_choice="major_gap", skill_acceptable=0.02)
     )
-    assert decision.passed is False
+    assert not gap.passed
+    assert "核心技术差距过大" in gap.reason
 
-    decision = BossJobFilter.parse_decision(
+    conflict = BossJobFilter.parse_decision(
         decision_payload(hard_choice="conflict", hard_conflict=0.87)
     )
-    assert decision.passed is False
+    assert not conflict.passed
+    assert "明确硬性条件冲突" in conflict.reason
 
 
-def test_ollama_decision_allows_low_confidence_conflict_as_unproven():
-    # 边界分数不是已证实的学历/年限硬冲突。
-    decision = BossJobFilter.parse_decision(
-        decision_payload(hard_choice="conflict", hard_conflict=0.65)
+def test_ollama_decision_allows_uncertain_conflict_and_partial_technical_fit():
+    # 低概率的冲突猜测不构成明确冲突，避免错过合适岗位。
+    uncertain = BossJobFilter.parse_decision(
+        decision_payload(hard_choice="conflict", hard_conflict=0.51)
     )
-    assert decision.passed is True
+    assert uncertain.passed is True
+    assert "暂不否决" in uncertain.reason
 
-
-def test_ollama_decision_rejects_low_confidence_top_choice():
-    decision = BossJobFilter.parse_decision(
-        decision_payload(skill_match=0.40, career_aligned=0.61)
+    # 技术大体可接受时，不再因概率未达到旧阈值而拒绝。
+    partial = BossJobFilter.parse_decision(
+        decision_payload(skill_acceptable=0.49)
     )
-    assert decision.passed is False
+    assert partial.passed is True
 
 
 def test_ollama_decision_rejects_invalid_answer():
@@ -160,9 +155,8 @@ def test_job_match_filter_calls_model_and_fails_closed():
     kwargs = fake_evaluate.call_args.kwargs
     assert "RAG" in kwargs["state"]["job"]["description"]
     assert "LangChain" in kwargs["state"]["candidate"]["skills"]
-    assert set(kwargs["questions"]) == {
-        "core_skill", "hard_conflict", "career_direction"
-    }
+    assert set(kwargs["questions"]) == {"core_skill", "hard_conflict"}
+    assert kwargs["state"]["candidate"]["job_preferences"]["required"] == []
 
     fake_evaluate.side_effect = httpx.TimeoutException("server timeout")
     failure = asyncio.run(service.check_model(detail, search_keyword="Agent"))
@@ -184,7 +178,7 @@ def test_ollama_client_only_handles_external_http():
             state={"candidate": {"skills": ["Python"]}},
             questions={"core_skill": {"type": "choice"}},
         )
-        assert result["answers"]["core_skill"]["choice"] == "match"
+        assert result["answers"]["core_skill"]["choice"] == "acceptable"
         fake_post.assert_awaited_once_with(
             "/v1/systemone",
             json={
