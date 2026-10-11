@@ -174,7 +174,9 @@ class BossJobExecutor:
         config: GlobalConfig,
     ) -> JobWalkStats:
         """逐个浏览岗位并渐进滚动，返回本轮执行统计。"""
-        next_index = 0
+
+        # 需要从1开始遍历，从0开始浏览器点击操作会出现异常
+        next_index = 1
         stagnant_scrolls = 0
         stats = JobWalkStats()
 
