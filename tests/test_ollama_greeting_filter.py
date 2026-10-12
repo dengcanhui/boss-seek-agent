@@ -5,10 +5,10 @@ from unittest.mock import AsyncMock
 import httpx
 import pytest
 
-from app.execution.filters.base import FilterResult
-from app.execution.filters.boss import BossJobFilter
 from app.domain.candidate.models import CandidateProfile
 from app.domain.global_config import GlobalConfig
+from app.execution.filters.base import FilterResult
+from app.execution.filters.boss import BossJobFilter
 from app.execution.boss.executor import BossJobExecutor
 from app.infrastructure.llm.ollama_decision_client import OllamaDecisionClient
 from tests.test_browser import FakeBrowser, FakeJobRecords
@@ -16,159 +16,123 @@ from tests.test_browser import FakeBrowser, FakeJobRecords
 
 class FakeProfileService:
     def get_profile(self):
-        return CandidateProfile(
-            expected_jobs=["Agent 开发"],
-            skills=["Python", "LangChain", "RAG"],
-            experience_years=3,
-            degree="本科",
-        )
+        return CandidateProfile(skills=["Python", "LangChain", "RAG"], experience_years=3, degree="本科")
 
 
-def decision_payload(
-    *,
-    skill_choice="acceptable",
-    skill_acceptable=0.68,
-    hard_choice="no_proven_conflict",
-    hard_conflict=0.01,
-):
-    return {
-        "model": "tev1:4b",
-        "answers": {
-            "core_skill": {
-                "type": "choice",
-                "choice": skill_choice,
-                "probabilities": {
-                    "acceptable": skill_acceptable,
-                    "major_gap": 1 - skill_acceptable,
-                },
-            },
-            "hard_conflict": {
-                "type": "choice",
-                "choice": hard_choice,
-                "probabilities": {
-                    "conflict": hard_conflict,
-                    "no_proven_conflict": 1 - hard_conflict,
-                },
-            },
-        },
+def single_answer(name, *, choice=None, reject_prob=0.01):
+    labels = {
+        "core_skill": ("acceptable", "major_gap"),
+        "hard_conflict": ("no_proven_conflict", "conflict"),
+    }[name]
+    return {"answers": {name: {
+        "type": "choice", "choice": choice or labels[0],
+        "probabilities": {labels[0]: 1 - reject_prob, labels[1]: reject_prob},
+    }}}
+
+
+def sample_detail(description="Python Agent 开发"):
+    return {"zpData": {"jobInfo": {"jobName": "Agent 开发", "postDescription": description}}}
+
+
+def test_skill_only_call_and_skip_hard_when_required_empty():
+    evaluator = AsyncMock(return_value=single_answer("core_skill"))
+    filt = BossJobFilter(FakeProfileService(), SimpleNamespace(evaluate=evaluator))
+    result = asyncio.run(filt.check_model(sample_detail(), search_keyword="Python后端"))
+    assert result.passed
+    evaluator.assert_awaited_once()
+    request = evaluator.call_args.kwargs
+    assert request["state"] == {
+        "candidate": {"skills": ["Python", "LangChain", "RAG"]},
+        "job": {"title": "Agent 开发", "description": "Python Agent 开发"},
     }
+    assert list(request["questions"]) == ["core_skill"]
 
 
-def test_model_input_keeps_hard_preferences_but_not_soft_preferences_and_trims_jd():
-    description = "岗位职责：" + "A" * 1600 + "任职要求：" + "B" * 1300
-    full = {
-        "candidate": {
-            "expected_jobs": ["Agent开发"],
-            "skills": ["Python", "RAG"],
-            "experience_years": 3,
-            "degree": "本科",
-            "job_preferences": {
-                "required": ["不接受单休", "不接受线下面试"],
-                "preferred": ["希望少加班"],
-            },
-            "expected_cities": ["杭州"],
-            "search_preferences": {"city_tier": "新一线"},
-        },
-        "search_keyword": "Agent",
-        "job": {
-            "title": "Agent开发工程师",
-            "description": description,
-            "company": "测试公司",
-            "salary": "20K",
-        },
+def test_skill_gap_stops_before_hard_check():
+    evaluator = AsyncMock(return_value=single_answer("core_skill", choice="major_gap", reject_prob=0.95))
+    profile = CandidateProfile(skills=["Python"], job_preferences={"required": ["只接受双休"]})
+    filt = BossJobFilter(SimpleNamespace(get_profile=lambda: profile), SimpleNamespace(evaluate=evaluator))
+    result = asyncio.run(filt.check_model(sample_detail("销售AI产品")))
+    assert not result.passed
+    evaluator.assert_awaited_once()
+
+
+def test_required_second_call_isolated_from_skill_experience_and_degree():
+    evaluator = AsyncMock(side_effect=[
+        single_answer("core_skill"),
+        single_answer("hard_conflict"),
+    ])
+    profile = CandidateProfile(
+        skills=["Python"], degree="本科", experience_years=3,
+        job_preferences={"required": ["只接受双休", "只接受线上面试"], "preferred": ["希望不加班"]},
+    )
+    filt = BossJobFilter(SimpleNamespace(get_profile=lambda: profile), SimpleNamespace(evaluate=evaluator))
+    result = asyncio.run(filt.check_model(sample_detail("Python开发，要求5年以上经验")))
+    assert result.passed and evaluator.await_count == 2
+    first, second = (call.kwargs for call in evaluator.await_args_list)
+    assert first["state"]["candidate"] == {"skills": ["Python"]}
+    assert list(first["questions"]) == ["core_skill"]
+    assert second["state"] == {
+        "candidate": {"required": ["只接受双休", "只接受线上面试"]},
+        "job": {"description": "Python开发，要求5年以上经验"},
     }
-    compact = BossJobFilter.compact_model_state(full)
-    assert compact["candidate"] == {
-        "expected_jobs": ["Agent开发"],
-        "skills": ["Python", "RAG"],
-        "experience_years": 3,
-        "degree": "本科",
-        "job_preferences": {"required": ["不接受单休", "不接受线下面试"]},
-    }
-    assert set(compact["job"]) == {"title", "description"}
-    assert compact["job"]["description"].startswith("岗位职责：")
-    assert compact["job"]["description"].endswith("B" * 200)
-    assert len(compact["job"]["description"]) < 1900
-    assert full["job"]["description"] == description
+    assert list(second["questions"]) == ["hard_conflict"]
 
 
-def test_ollama_decision_allows_related_skill_and_no_proven_conflict():
-    result = BossJobFilter.parse_decision(
-        decision_payload(skill_acceptable=0.56, hard_conflict=0.013)
-    )
-    assert result.passed is True
-    assert "冲突概率 0.01" in result.reason
+@pytest.mark.parametrize("prob,expected", [(0.95, False), (0.65, True)])
+def test_model_hard_conflict_threshold(prob, expected):
+    evaluator = AsyncMock(side_effect=[
+        single_answer("core_skill"),
+        single_answer("hard_conflict", choice="conflict", reject_prob=prob),
+    ])
+    profile = CandidateProfile(skills=["Python"], job_preferences={"required": ["不接受出差"]})
+    filt = BossJobFilter(SimpleNamespace(get_profile=lambda: profile), SimpleNamespace(evaluate=evaluator))
+    result = asyncio.run(filt.check_model(sample_detail("Python 后端")))
+    assert result.passed is expected
 
 
-def test_ollama_decision_rejects_major_skill_gap_or_clear_hard_conflict():
-    gap = BossJobFilter.parse_decision(
-        decision_payload(skill_choice="major_gap", skill_acceptable=0.02)
-    )
-    assert not gap.passed
-    assert "核心技术差距过大" in gap.reason
-
-    conflict = BossJobFilter.parse_decision(
-        decision_payload(hard_choice="conflict", hard_conflict=0.87)
-    )
-    assert not conflict.passed
-    assert "明确硬性条件冲突" in conflict.reason
+def test_explicit_weekend_conflict_even_if_model_misses_it():
+    evaluator = AsyncMock(side_effect=[single_answer("core_skill"), single_answer("hard_conflict")])
+    profile = CandidateProfile(skills=["Python"], job_preferences={"required": ["只接受双休"]})
+    filt = BossJobFilter(SimpleNamespace(get_profile=lambda: profile), SimpleNamespace(evaluate=evaluator))
+    result = asyncio.run(filt.check_model(sample_detail("薪资福利：大小休、五险。")))
+    assert not result.passed and "大小周/大小休" in result.reason
+    assert evaluator.await_count == 2
 
 
-def test_ollama_decision_allows_uncertain_conflict_and_partial_technical_fit():
-    # 低概率的冲突猜测不构成明确冲突，避免错过合适岗位。
-    uncertain = BossJobFilter.parse_decision(
-        decision_payload(hard_choice="conflict", hard_conflict=0.51)
-    )
-    assert uncertain.passed is True
-    assert "暂不否决" in uncertain.reason
-
-    # 技术大体可接受时，不再因概率未达到旧阈值而拒绝。
-    partial = BossJobFilter.parse_decision(
-        decision_payload(skill_acceptable=0.49)
-    )
-    assert partial.passed is True
+def test_no_false_positive_for_negated_weekend_or_optional_interview():
+    checker = BossJobFilter._explicit_required_conflict
+    required = ["只接受双休", "只接受线上面试"]
+    assert checker("福利：大小休、五险", required)
+    assert checker("公司采用单休制度", required)
+    assert checker("面试要求线下", required)
+    assert checker("福利：双休，不实行大小周", required) is None
+    assert checker("面试方式：线上或线下均可", required) is None
+    assert checker("硕士学历，5年以上经验", required) is None
 
 
-def test_ollama_decision_rejects_invalid_answer():
-    with pytest.raises(ValueError, match="answers"):
-        BossJobFilter.parse_decision({"model": "tev1:4b"})
-    with pytest.raises(ValueError, match="core_skill"):
-        BossJobFilter.parse_decision(
-            {"answers": {"core_skill": {"choice": "match"}}}
-        )
+def test_missing_second_answer_or_model_failure_rejects():
+    profile = CandidateProfile(skills=["Python"], job_preferences={"required": ["只接受双休"]})
+    for second in ({"answers": {}}, httpx.TimeoutException("timed out")):
+        evaluator = AsyncMock(side_effect=[single_answer("core_skill"), second])
+        filt = BossJobFilter(SimpleNamespace(get_profile=lambda: profile), SimpleNamespace(evaluate=evaluator))
+        result = asyncio.run(filt.check_model(sample_detail()))
+        assert not result.passed
+        assert "Ollama" in result.reason
 
 
-def test_job_match_filter_calls_model_and_fails_closed():
-    fake_evaluate = AsyncMock(return_value=decision_payload())
-    service = BossJobFilter(
-        FakeProfileService(),
-        SimpleNamespace(evaluate=fake_evaluate),
-    )
-    detail = {
-        "zpData": {
-            "jobInfo": {"jobName": "Agent 开发", "postDescription": "熟悉 Python 和 RAG"},
-            "brandComInfo": {"brandName": "示例公司"},
-        }
-    }
-    result = asyncio.run(service.check_model(detail, search_keyword="Agent"))
-    assert result.passed is True
-    kwargs = fake_evaluate.call_args.kwargs
-    assert "RAG" in kwargs["state"]["job"]["description"]
-    assert "LangChain" in kwargs["state"]["candidate"]["skills"]
-    assert set(kwargs["questions"]) == {"core_skill", "hard_conflict"}
-    assert kwargs["state"]["candidate"]["job_preferences"]["required"] == []
-
-    fake_evaluate.side_effect = httpx.TimeoutException("server timeout")
-    failure = asyncio.run(service.check_model(detail, search_keyword="Agent"))
-    assert failure.passed is False
-    assert "Ollama" in failure.reason
+def test_invalid_first_answer_rejects_without_second_call():
+    evaluator = AsyncMock(return_value={"answers": {"core_skill": {"choice": "what"}}})
+    filt = BossJobFilter(FakeProfileService(), SimpleNamespace(evaluate=evaluator))
+    assert not asyncio.run(filt.check_model(sample_detail())).passed
+    evaluator.assert_awaited_once()
 
 
 def test_ollama_client_only_handles_external_http():
     client = OllamaDecisionClient(model="tev1:4b")
     request = httpx.Request("POST", "http://127.0.0.1:11434/v1/systemone")
     fake_post = AsyncMock(
-        return_value=httpx.Response(200, json=decision_payload(), request=request)
+        return_value=httpx.Response(200, json=single_answer("core_skill"), request=request)
     )
     original_http_client = client.client
     client.client = SimpleNamespace(post=fake_post)

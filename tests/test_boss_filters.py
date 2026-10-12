@@ -36,51 +36,67 @@ def _profile_with_required(*requirements: str, preferred: list[str] | None = Non
 
 
 def test_missing_rest_or_interview_information_does_not_block():
-    from tests.test_ollama_greeting_filter import decision_payload
-    model = SimpleNamespace(evaluate=AsyncMock(return_value=decision_payload()))
+    from tests.test_ollama_greeting_filter import single_answer
+    evaluator = AsyncMock(side_effect=[
+        single_answer("core_skill"), single_answer("hard_conflict"),
+    ])
     profile = _profile_with_required(
         "不接受单休", "不接受线下面试", preferred=["希望少加班"]
     )
-    f = BossJobFilter(SimpleNamespace(get_profile=lambda: profile), model)
+    f = BossJobFilter(SimpleNamespace(get_profile=lambda: profile), SimpleNamespace(evaluate=evaluator))
 
     result = asyncio.run(
         f.check_detail(detail_payload("使用Python开发Agent，负责RAG"), GlobalConfig())
     )
     assert result.passed
-    model.evaluate.assert_awaited_once()
-    request = model.evaluate.call_args.kwargs
-    assert set(request["questions"]) == {"core_skill", "hard_conflict"}
-    assert request["state"]["candidate"]["job_preferences"] == {
+    assert evaluator.await_count == 2
+    first, second = (call.kwargs for call in evaluator.await_args_list)
+    assert first["state"]["candidate"] == {"skills": ["Python"]}
+    assert set(first["questions"]) == {"core_skill"}
+    assert second["state"]["candidate"] == {
         "required": ["不接受单休", "不接受线下面试"]
     }
-    assert "希望少加班" not in str(request["state"])
-    assert "未提及休息制度" in request["questions"]["hard_conflict"]["instructions"]
+    assert "希望少加班" not in str(second["state"])
+    assert "面试方式" in second["questions"]["hard_conflict"]["instructions"]
 
 
-def test_explicit_hard_conflicts_are_rejected_in_same_model_request():
-    from tests.test_ollama_greeting_filter import decision_payload
+def test_explicit_user_bottom_line_conflicts_are_rejected_in_second_request():
+    from tests.test_ollama_greeting_filter import single_answer
     cases = (
         ("明确单休，Python Agent研发", ["不接受单休"]),
         ("必须到现场线下面试，Python Agent研发", ["不接受线下面试"]),
-        ("学历要求硕士研究生及以上，Python Agent研发", []),
-        ("明确5年以上工作经验，Python Agent研发", []),
     )
     for description, required in cases:
-        model = SimpleNamespace(evaluate=AsyncMock(return_value=decision_payload(
-            hard_choice="conflict", hard_conflict=0.96,
-        )))
+        evaluator = AsyncMock(side_effect=[
+            single_answer("core_skill"),
+            single_answer("hard_conflict", choice="conflict", reject_prob=0.96),
+        ])
         profile = _profile_with_required(*required)
         profile.degree = "本科"
         profile.experience_years = 3
-        f = BossJobFilter(SimpleNamespace(get_profile=lambda: profile), model)
-        result = asyncio.run(f.check_detail(detail_payload(description), GlobalConfig()))
+        filt = BossJobFilter(SimpleNamespace(get_profile=lambda: profile), SimpleNamespace(evaluate=evaluator))
+        result = asyncio.run(filt.check_detail(detail_payload(description), GlobalConfig()))
         assert not result.passed
-        assert "明确硬性条件冲突" in result.reason
-        model.evaluate.assert_awaited_once()
-        request = model.evaluate.call_args.kwargs
+        assert "硬性条件：" in result.reason
+        assert evaluator.await_count == 2
+        request = evaluator.await_args_list[1].kwargs
         assert request["state"]["job"]["description"] == description
-        assert request["state"]["candidate"]["degree"] == "本科"
-        assert request["state"]["candidate"]["experience_years"] == 3
+        assert request["state"]["candidate"] == {"required": required}
+
+
+def test_education_and_years_not_used_as_hard_conflicts():
+    from tests.test_ollama_greeting_filter import single_answer
+    evaluator = AsyncMock(return_value=single_answer("core_skill"))
+    profile = _profile_with_required()
+    profile.degree = "本科"
+    profile.experience_years = 3
+    filt = BossJobFilter(SimpleNamespace(get_profile=lambda: profile), SimpleNamespace(evaluate=evaluator))
+    result = asyncio.run(filt.check_detail(
+        detail_payload("学历要求硕士及以上，要求5年以上经验，主要为Python开发"), GlobalConfig()
+    ))
+    assert result.passed
+    evaluator.assert_awaited_once()
+    assert "未设置个人底线" in result.reason
 
 
 def test_disabling_ai_filter_skips_only_model_filter():
