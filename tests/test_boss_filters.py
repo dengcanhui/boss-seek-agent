@@ -147,6 +147,10 @@ def test_detail_filters_user_rules_before_ollama():
 def test_detail_inactive_and_relation_filter_are_preserved():
     f = BossJobFilter()
     detail = detail_payload()
+    for active_desc in ("本周活跃", "本周内活跃"):
+        detail["zpData"]["bossInfo"]["activeTimeDesc"] = active_desc
+        assert f.check_detail_rules(detail, GlobalConfig()).passed
+
     detail["zpData"]["bossInfo"]["activeTimeDesc"] = "上周活跃"
     result = f.check_detail_rules(detail, GlobalConfig())
     assert not result.passed

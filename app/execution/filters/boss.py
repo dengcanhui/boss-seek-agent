@@ -142,8 +142,8 @@ class BossJobFilter(BaseJobFilter):
 
         boss = data.get("bossInfo")
         boss = boss if isinstance(boss, dict) else {}
-        active_desc = str(boss.get("activeTimeDesc") or "")
-        if config.filter_inactive_over_week and any(
+        active_desc = str(boss.get("activeTimeDesc") or "").strip()
+        if config.filter_inactive_over_week and "本周" not in active_desc and any(
             unit in active_desc for unit in ("周", "月", "年")
         ):
             return FilterResult.reject(f"招聘者长期不活跃：{active_desc}")

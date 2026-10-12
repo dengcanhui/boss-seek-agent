@@ -34,7 +34,7 @@ class GlobalConfig(BaseModel):
     greet_wait_min_seconds: float = Field(default=8.0, ge=0, le=3600)
     # 每次打招呼后的随机等待时间上限，单位：秒。
     greet_wait_max_seconds: float = Field(default=15.0, ge=0, le=3600)
-    # 是否过滤活跃时间中出现“周 / 月 / 年”等长期不活跃特征的岗位。
+    # 是否过滤上周、月、年等长期不活跃岗位；本周活跃允许通过。
     filter_inactive_over_week: bool = True
     # 在规则过滤通过后，用本地 Ollama 再判断是否值得打招呼。
     ai_greeting_filter_enabled: bool = True
