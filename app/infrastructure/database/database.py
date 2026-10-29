@@ -36,6 +36,7 @@ def _run_migrations() -> None:
         (2, _migrate_unlimited_search_values),
         (3, _migrate_job_record_not_greeted_reason),
         (5, _migrate_utc_times_to_china),
+        (6, _migrate_task_result),
     )
     with engine.begin() as connection:
         connection.execute(
@@ -57,6 +58,17 @@ def _run_migrations() -> None:
                 text("INSERT INTO schema_migrations(version) VALUES (:version)"),
                 {"version": version},
             )
+
+
+def _migrate_task_result(connection: Connection) -> None:
+    columns = {column["name"] for column in inspect(connection).get_columns("search_tasks")}
+    if "error" in columns and "reason" not in columns:
+        connection.execute(text("ALTER TABLE search_tasks RENAME COLUMN error TO reason"))
+    elif "reason" not in columns:
+        connection.execute(text("ALTER TABLE search_tasks ADD COLUMN reason TEXT"))
+    for column in ("visited_count", "greeted_count"):
+        if column not in columns:
+            connection.execute(text(f"ALTER TABLE search_tasks ADD COLUMN {column} INTEGER"))
 
 
 def _update_task_config(connection: Connection, task_id: int, data: dict[str, Any]) -> None:

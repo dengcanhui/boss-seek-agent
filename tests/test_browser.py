@@ -7,6 +7,7 @@ import pytest
 from app.domain.global_config import GlobalConfig
 from app.execution.boss import locators
 from app.execution.boss.executor import BossJobExecutor
+from app.execution.boss.executor import JobWalkStats
 from app.execution.filters.boss import BossJobFilter
 from app.execution.filters.boss import BossJobFilter
 from app.infrastructure.browser.ruyipage import RuyiPageBrowser
@@ -136,6 +137,34 @@ class FakeBrowser:
         if "joblist.json" in target:
             return {"code": 0, "zpData": {"jobList": []}}
         return None
+
+
+@pytest.mark.parametrize(
+    ("outcomes", "expected_visited", "expected_greeted", "early"),
+    [
+        ([True] * 7 + [False] * 8 + [True], 15, 7, True),
+        ([True] * 8 + [False] * 7 + [False], 16, 8, True),
+        ([False] * 14, 14, 0, False),
+    ],
+)
+def test_walk_stops_on_recent_greeting_rate(outcomes, expected_visited, expected_greeted, early):
+    browser = FakeBrowser()
+    browser.cards = [FakeCard("placeholder")] + [FakeCard(str(i)) for i in range(len(outcomes))]
+    executor = BossJobExecutor(browser)
+    executor.MAX_STAGNANT_SCROLLS = 0 if not outcomes else 1
+
+    async def process(task, config, card, index, stats):
+        stats.handled += 1
+        stats.greeted += int(outcomes[index - 1])
+
+    async def load_more():
+        return None
+
+    executor._process_card = process
+    executor._load_more = load_more
+    stats = asyncio.run(executor._walk_jobs(SimpleNamespace(id=1), GlobalConfig(max_jobs_per_task=100)))
+    assert (stats.visited, stats.greeted) == (expected_visited, expected_greeted)
+    assert bool(stats.reason) is early
 
 
 def test_job_executor_starts_browser_once_before_page_operations():

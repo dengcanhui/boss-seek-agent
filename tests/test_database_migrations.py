@@ -7,8 +7,20 @@ from app.infrastructure.database.database import (
     Base,
     _migrate_search_task_config_names,
     _migrate_unlimited_search_values,
+    _migrate_task_result,
 )
 from app.infrastructure.database import tables  # noqa: F401
+
+
+def test_task_result_migration_preserves_old_errors(tmp_path: Path):
+    engine = create_engine(f"sqlite:///{tmp_path / 'old.db'}")
+    with engine.begin() as connection:
+        connection.execute(text("CREATE TABLE search_tasks (id INTEGER PRIMARY KEY, error TEXT)"))
+        connection.execute(text("INSERT INTO search_tasks (error) VALUES ('old failure')"))
+        _migrate_task_result(connection)
+        _migrate_task_result(connection)
+        row = connection.execute(text("SELECT reason, visited_count, greeted_count FROM search_tasks")).one()
+        assert tuple(row) == ("old failure", None, None)
 
 
 def test_search_task_migrations_normalize_old_config(tmp_path: Path):

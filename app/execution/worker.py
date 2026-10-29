@@ -3,7 +3,7 @@ import logging
 from contextlib import suppress
 
 from app.domain.search.enums import JobSeekTaskStatus
-from app.execution.boss.executor import BossJobExecutor
+from app.execution.boss.executor import BossJobExecutor, JobWalkStats
 from app.infrastructure.database.repositories.job_seek_task_repository import JobSeekTaskRepository
 
 
@@ -29,7 +29,7 @@ class JobSeekWorker:
         self.poll_interval: float = poll_interval
         self.control_poll_interval: float = control_poll_interval
         self._stop_event: asyncio.Event = asyncio.Event()
-        self._active_execution: asyncio.Task[None] | None = None
+        self._active_execution: asyncio.Task[JobWalkStats] | None = None
         self._active_job_seek_task_id: int | None = None
         self._running: bool = False
 
@@ -75,7 +75,7 @@ class JobSeekWorker:
 
                 if execution in done:
                     try:
-                        await execution
+                        stats = await execution
                     except asyncio.CancelledError:
                         current = self.repository.get(job_seek_task.id)
                         if current is not None and current.status == JobSeekTaskStatus.RUNNING:
@@ -90,6 +90,9 @@ class JobSeekWorker:
                         job_seek_task.id,
                         JobSeekTaskStatus.RUNNING,
                         JobSeekTaskStatus.COMPLETED,
+                        reason=stats.reason if stats is not None else None,
+                        visited_count=stats.visited if stats is not None else None,
+                        greeted_count=stats.greeted if stats is not None else None,
                     )
                     logger.info("[worker] 任务执行完成 task_id=%s", job_seek_task.id)
                     return True
@@ -128,7 +131,7 @@ class JobSeekWorker:
                 job_seek_task.id,
                 JobSeekTaskStatus.RUNNING,
                 JobSeekTaskStatus.FAILED,
-                error=str(exc),
+                reason=str(exc),
             )
             return True
         finally:

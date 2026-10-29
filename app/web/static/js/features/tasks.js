@@ -378,7 +378,9 @@ function historyRow(task) {
     <td><strong>${escapeHtml(config.query || "未命名搜索")}</strong><small>#${task.id}</small></td>
     <td>${escapeHtml(`${city} · ${taskDetails(task)}`)}</td>
     <td>${escapeHtml(String(task.priority ?? 0))}</td>
-    <td><span class="task-status ${escapeHtml(task.status)}">${escapeHtml(statusLabels[task.status] || task.status)}</span></td>
+    <td><span class="task-status ${escapeHtml(task.status)}">${escapeHtml(statusLabels[task.status] || task.status)}</span>
+      ${task.visited_count != null ? `<small>遍历 ${escapeHtml(String(task.visited_count))} · 打招呼 ${escapeHtml(String(task.greeted_count ?? 0))}</small>` : ""}
+      ${task.reason ? `<small>${escapeHtml(task.reason)}</small>` : ""}</td>
     <td>${escapeHtml(formatTime(task.updated_at))}</td>
     <td class="history-actions"><button class="text-button task-requeue" data-task-id="${task.id}">重新添加</button></td>
   </tr>`;

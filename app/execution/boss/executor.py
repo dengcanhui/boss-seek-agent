@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import random
+from collections import deque
 from dataclasses import dataclass
 from typing import Any
 from urllib.parse import urlencode
@@ -38,6 +39,7 @@ class JobWalkStats:
     greeted: int = 0
     # 处理过程中发生异常的岗位数量。
     errors: int = 0
+    reason: str | None = None
 
 
 class BossJobExecutor:
@@ -97,7 +99,7 @@ class BossJobExecutor:
             {key: value for key, value in params.items() if value}
         )
 
-    async def execute(self, job_seek_task: JobSeekTask) -> None:
+    async def execute(self, job_seek_task: JobSeekTask) -> JobWalkStats:
         """执行一条搜索任务，直到列表不再产生新岗位。"""
         task_id = getattr(job_seek_task, "id", "?")
         logger.info(
@@ -149,6 +151,7 @@ class BossJobExecutor:
                 f"获取了 {stats.detail_loaded} 个岗位详情，但没有任何岗位被成功处理，请检查数据库或页面交互。"
             )
         logger.info("[boss] 任务执行结束 task_id=%s", task_id)
+        return stats
 
     async def _open_search(self, job_seek_task: JobSeekTask) -> None:
         """进入搜索页，校验首屏列表接口并等待岗位列表 DOM 就绪。"""
@@ -175,10 +178,11 @@ class BossJobExecutor:
     ) -> JobWalkStats:
         """逐个浏览岗位并渐进滚动，返回本轮执行统计。"""
 
-        # 需要从1开始遍历，从0开始浏览器点击操作会出现异常
+        # 页面第一个元素此前从 0 开始点击会异常，保留现有遍历起点。
         next_index = 1
         stagnant_scrolls = 0
         stats = JobWalkStats()
+        recent_greetings: deque[bool] = deque(maxlen=15)
 
         while stagnant_scrolls < self.MAX_STAGNANT_SCROLLS:
             if stats.visited >= config.max_jobs_per_task:
@@ -204,8 +208,15 @@ class BossJobExecutor:
                 logger.info("[boss] 开始处理岗位 #%s", next_index + 1)
                 stats.visited += 1
                 await self._position_card_for_reading(card)
+                greeted_before = stats.greeted
                 await self._process_card(job_seek_task, config, card, next_index, stats)
+                recent_greetings.append(stats.greeted > greeted_before)
                 logger.info("[boss] 岗位 #%s 处理完成", next_index + 1)
+                if len(recent_greetings) == 15 and sum(recent_greetings) <= 7:
+                    missed = 15 - sum(recent_greetings)
+                    stats.reason = f"最近 15 条岗位中有 {missed} 条未打招呼，提前结束任务"
+                    logger.info("[boss] %s task_id=%s", stats.reason, getattr(job_seek_task, "id", "?"))
+                    break
                 next_index += 1
                 stagnant_scrolls = 0
                 continue
@@ -310,9 +321,8 @@ class BossJobExecutor:
                 return
 
             logger.info("[boss] 岗位 #%s 详情判断结果=打招呼", index + 1)
-            await self._greet(detail, config)
+            await self._greet(detail, config, stats)
             stats.handled += 1
-            stats.greeted += 1
         except Exception as exc:
             stats.errors += 1
             if detail is not None and self.job_records is not None:
@@ -335,12 +345,14 @@ class BossJobExecutor:
         logger.info("[boss] 岗位详情接口获取成功")
         return payload
 
-    async def _greet(self, detail: dict[str, Any], config: GlobalConfig) -> None:
+    async def _greet(self, detail: dict[str, Any], config: GlobalConfig, stats: JobWalkStats | None = None) -> None:
         """点击打招呼入口，并关闭随后出现的沟通弹窗。"""
         job_name = detail.get("zpData", {}).get("jobInfo", {}).get("jobName", "")
         await self._random_action_delay("点击打招呼", self.GREET_CLICK_DELAY)
         logger.info("[boss] 点击打招呼按钮 job=%s", job_name)
         await self.browser.click(locators.GREET_BUTTON)
+        if stats is not None:
+            stats.greeted += 1
         if self.job_records is not None:
             self.job_records.mark_greeted(detail)
             logger.info("[boss] 已记录岗位打招呼状态 job=%s", job_name)

@@ -1,11 +1,16 @@
 from __future__ import annotations
 
 import json
+import logging
+import time
+import uuid
 from typing import Any
 
 from openai import AsyncOpenAI
 
 from app.infrastructure.llm.base import LLMResponse, ToolCall
+
+logger = logging.getLogger("uvicorn.error.llm")
 
 
 class LLMClient:
@@ -42,8 +47,20 @@ class LLMClient:
         request["reasoning_effort"] = "high"
         request["extra_body"] = {"thinking": {"type": "enabled"}}
 
-        response = await self.client.chat.completions.create(**request)
-        message = response.choices[0].message
+        request_id = uuid.uuid4().hex[:12]
+        started = time.perf_counter()
+        logger.info("[llm] 请求 id=%s model=%s messages=%s tools=%s", request_id, self.model,
+                    json.dumps(messages, ensure_ascii=False, default=str), json.dumps(tools, ensure_ascii=False, default=str))
+        try:
+            response = await self.client.chat.completions.create(**request)
+            message = response.choices[0].message
+            logger.info("[llm] 返回 id=%s 耗时=%.3fs content=%s tool_calls=%s usage=%s", request_id,
+                        time.perf_counter() - started, message.content,
+                        [(c.id, c.function.name, c.function.arguments) for c in (message.tool_calls or []) if c.type == "function"],
+                        getattr(response, "usage", None))
+        except Exception:
+            logger.exception("[llm] 请求失败 id=%s 耗时=%.3fs", request_id, time.perf_counter() - started)
+            raise
 
         tool_calls: list[ToolCall] = []
         for call in message.tool_calls or []:

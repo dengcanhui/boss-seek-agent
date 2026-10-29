@@ -29,7 +29,9 @@ class JobSeekTaskRepository:
             config=BossSearchConfig.model_validate_json(row.config_json),
             priority=row.priority,
             status=JobSeekTaskStatus(row.status),
-            error=row.error,
+            reason=row.reason,
+            visited_count=row.visited_count,
+            greeted_count=row.greeted_count,
             created_at=cls._as_china_time(row.created_at),
             updated_at=cls._as_china_time(row.updated_at),
         )
@@ -97,13 +99,13 @@ class JobSeekTaskRepository:
                 raise KeyError(task_id)
             return self._to_domain(row)
 
-    def set_status(self, task_id: int, status: JobSeekTaskStatus, error: str | None = None) -> JobSeekTask:
+    def set_status(self, task_id: int, status: JobSeekTaskStatus, reason: str | None = None) -> JobSeekTask:
         with self.session_factory() as session:
             row = session.get(JobSeekTaskRow, task_id)
             if not row:
                 raise KeyError(task_id)
             row.status = status.value
-            row.error = error
+            row.reason = reason
             row.updated_at = datetime.now(self.CHINA_TZ)
             session.commit()
             session.refresh(row)
@@ -114,7 +116,9 @@ class JobSeekTaskRepository:
         task_id: int,
         expected: JobSeekTaskStatus,
         status: JobSeekTaskStatus,
-        error: str | None = None,
+        reason: str | None = None,
+        visited_count: int | None = None,
+        greeted_count: int | None = None,
     ) -> JobSeekTask:
         with self.session_factory() as session:
             session.execute(
@@ -125,7 +129,9 @@ class JobSeekTaskRepository:
                 )
                 .values(
                     status=status.value,
-                    error=error,
+                    reason=reason,
+                    visited_count=visited_count,
+                    greeted_count=greeted_count,
                     updated_at=datetime.now(self.CHINA_TZ),
                 )
             )
@@ -144,7 +150,7 @@ class JobSeekTaskRepository:
                     .where(JobSeekTaskRow.status == JobSeekTaskStatus.RUNNING.value)
                     .values(
                         status=JobSeekTaskStatus.STOPPED.value,
-                        error=None,
+                        reason=None,
                         updated_at=datetime.now(self.CHINA_TZ),
                     )
                 ),
@@ -193,7 +199,7 @@ class JobSeekTaskRepository:
                         )
                         .values(
                             status=JobSeekTaskStatus.RUNNING.value,
-                            error=None,
+                            reason=None,
                             updated_at=datetime.now(self.CHINA_TZ),
                         )
                     ),

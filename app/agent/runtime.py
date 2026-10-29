@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
+import time
 from typing import Any
 from weakref import WeakValueDictionary
 
@@ -14,6 +16,7 @@ from app.infrastructure.llm import LLMClient
 
 MAX_TOOL_ROUNDS = 6
 HISTORY_LIMIT = 30
+logger = logging.getLogger("uvicorn.error.agent")
 
 
 class AgentRuntime:
@@ -86,6 +89,9 @@ class AgentRuntime:
             messages.append({"role": "assistant", "content": response.content or None, "tool_calls": assistant_calls})
 
             for call in response.tool_calls:
+                started = time.perf_counter()
+                logger.info("[tool] 调用 conversation_id=%s id=%s name=%s arguments=%s", conversation_id,
+                            call.id, call.name, json.dumps(call.arguments, ensure_ascii=False, default=str))
                 try:
                     result = await self.registry.execute(call.name, call.arguments)
                     if hasattr(result, "model_dump"):
@@ -95,7 +101,11 @@ class AgentRuntime:
                     else:
                         payload = result
                     tool_content = json.dumps(payload, ensure_ascii=False, default=str)
+                    logger.info("[tool] 返回 conversation_id=%s id=%s name=%s 耗时=%.3fs result=%s",
+                                conversation_id, call.id, call.name, time.perf_counter() - started, tool_content)
                 except Exception as exc:  # tool error is returned to model; runtime stays alive
+                    logger.exception("[tool] 失败 conversation_id=%s id=%s name=%s 耗时=%.3fs",
+                                     conversation_id, call.id, call.name, time.perf_counter() - started)
                     tool_content = json.dumps({"error": str(exc)}, ensure_ascii=False)
                 messages.append({"role": "tool", "tool_call_id": call.id, "content": tool_content})
 

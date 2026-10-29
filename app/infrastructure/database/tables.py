@@ -24,7 +24,9 @@ class JobSeekTaskRow(Base):
     config_json: Mapped[str] = mapped_column(Text)
     priority: Mapped[int] = mapped_column(Integer, default=0, index=True)
     status: Mapped[str] = mapped_column(String(32), default="pending", index=True)
-    error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    visited_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    greeted_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=china_now)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=china_now, onupdate=china_now)
 

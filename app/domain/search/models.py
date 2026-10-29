@@ -120,7 +120,9 @@ class JobSeekTask(BaseModel):
     priority: int
     # pending / running / completed / failed 等任务状态。
     status: JobSeekTaskStatus
-    # 最近一次失败原因；正常任务为 None。
-    error: str | None = None
+    # 任务结束或失败的原因；自然完成时为 None。
+    reason: str | None = None
+    visited_count: int | None = None
+    greeted_count: int | None = None
     created_at: datetime
     updated_at: datetime

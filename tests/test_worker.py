@@ -9,6 +9,7 @@ from app.application.search.job_seek_task_service import JobSeekTaskService
 from app.domain.search.enums import JobSeekTaskStatus
 from app.domain.search.models import JobSeekTaskParams
 from app.execution.worker import JobSeekWorker
+from app.execution.boss.executor import JobWalkStats
 from app.infrastructure.database.database import Base
 from app.infrastructure.database.repositories.job_seek_task_repository import (
     JobSeekTaskRepository,
@@ -74,6 +75,23 @@ def test_worker_run_once_completes_claimed_task(tmp_path: Path):
     assert asyncio.run(worker.run_once()) is True
     assert executor.executed_ids == [task.id]
     assert repository.get(task.id).status == JobSeekTaskStatus.COMPLETED
+
+
+def test_worker_persists_early_exit_counts_and_reason(tmp_path: Path):
+    repository = make_repository(tmp_path)
+    task = create_task(repository)
+
+    class EarlyExitExecutor:
+        async def execute(self, task):
+            return JobWalkStats(visited=15, greeted=7, reason="最近 15 条中有 8 条未打招呼")
+
+    worker = JobSeekWorker(repository, EarlyExitExecutor())
+    worker.prepare_start()
+    asyncio.run(worker.run_once())
+    saved = repository.get(task.id)
+    assert saved.status == JobSeekTaskStatus.COMPLETED
+    assert (saved.visited_count, saved.greeted_count) == (15, 7)
+    assert saved.reason == "最近 15 条中有 8 条未打招呼"
 
 
 def test_executor_cancelled_without_user_control_marks_task_stopped(tmp_path: Path):
